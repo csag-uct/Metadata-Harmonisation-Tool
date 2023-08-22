@@ -4,7 +4,7 @@
 
 This repository contains two primary elements:
 1) A general template being used by the [HE2AT Centre](https://heatcenter.wrhi.ac.za) data harmonisation team, here using the [CINECA synthetic cohort Africa H3ABioNet v1](https://www.cineca-project.eu/synthetic-data/sdc-africa-h3abionet-v1) dataset as an example.
-2) A simple [streamlit](https://streamlit.io) application we have constructed to that allows the matching of variables in the incoming studies to our codebook. See the seperate README file for this application [here](https://github.com/csag-uct/Health_Data_Harmonisation_Platform/blob/main/app/requirements.txt). 
+2) A simple [streamlit](https://streamlit.io) application we have constructed to that allows the matching of variables in the incoming studies to our codebook.
 
 ## General work flow:
 
