@@ -35,7 +35,7 @@ From here incoming study data is expected to be placed into the `data/{study}` f
 
 The notebook located at `code/01_progress_monitor.ipynb` can be used to track the progress of steps 1-3. Once all studies have been converted to csv format and variable names and abbreviations extracted the notebook at `code/02_generate_synthetic_data.ipynb` can be used to generate a randomized dataset for each study. This is used for the mapping interface. Next the notebook at `code/03_ontology_recommendation_engine.ipynb` is used to to first fetch embedding vectors for the incoming study variables before ranking the codebook variables from most to least similar for each incoming study variable. 
 
-### Step 4:
+### Step 4 / TL;DR:
 
 Once the above has been completed the mapping GUI is ready to be used. (These have already been completed in this example repo). To run the GUI follow these instructions:
 
