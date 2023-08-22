@@ -1,0 +1,13 @@
+name: health_harmonisation
+channels:
+- conda-forge
+dependencies:
+- jupyterlab
+- numpy
+- pandas
+- fsspec
+- json
+- duckdp
+- openai
+- openpyxel
+- streamlit
