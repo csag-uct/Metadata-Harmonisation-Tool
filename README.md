@@ -10,9 +10,9 @@ This repository contains two primary elements:
 
 ### Initialise:
 
-This repository is intended to form the foundation of a jupyter lab based data science platform to configure this on your local machine follow these instructions:
+This repository is intended to form the foundation of a jupyter lab based data science platform. To configure this on your local machine follow these instructions:
 
-```console
+```
 git clone git@github.com:csag-uct/Health_Data_Harmonisation_Platform.git
 cd Health_Data_Harmonisation_Platform
 
@@ -40,7 +40,7 @@ The notebook located at `code/01_progress_monitor.ipynb` can be used to track th
 
 Once the above has been completed the mapping GUI is ready to be used. (These have already been completed in this example repo). To run the GUI follow these instructions:
 
-```console
+```
 cd app/
 streamlit run Home.py
 ```
