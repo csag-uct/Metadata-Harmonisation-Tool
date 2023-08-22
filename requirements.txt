@@ -1,0 +1,9 @@
+jupyterlab
+numpy
+pandas
+fsspec
+json
+duckdb
+openai
+openpyxel
+streamlit

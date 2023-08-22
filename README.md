@@ -16,8 +16,9 @@ This repository is intended to form the foundation of a jupyter lab based data s
 git clone git@github.com:csag-uct/Health_Data_Harmonisation_Platform.git
 cd Health_Data_Harmonisation_Platform
 
-conda env create -f environment.yml
+conda create --name health_harmonisation
 conda activate health_harmonisation
+conda install --file requirements.txt
 
 jupyter lab
 ```
