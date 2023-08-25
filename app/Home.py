@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import fsspec
 import duckdb
-from streamlit_keycloak import login
 
 fs = fsspec.filesystem("")
 
