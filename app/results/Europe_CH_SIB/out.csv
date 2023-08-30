@@ -1,7 +1,4 @@
 study_var,codebook_var,confidence,notes,marked
-age,,,,To do
-gender,,,,To do
-ht,,,,To do
 HRTRTE,,,,To do
 wt,,,,To do
 pt,,,,To do
@@ -19,3 +16,6 @@ dginvtx3,,,,To do
 sbsmk,,,,To do
 ethori_self,,,,To do
 phyact,,,,To do
+age,Age-Years ,88%,,Successfully mapped
+gender,Sex ,88%,,Successfully mapped
+ht,Height ,87%,,Successfully mapped

@@ -1,6 +1,5 @@
 study_var,codebook_var,confidence,notes,marked
 Collection date of smoking status information,,,,To do
-Average height,,,,To do
 Have you ever been tested for HIV?,,,,To do
 When did you have your most recent HIV  test?,,,,To do
 Calculated average weight (kg),,,,To do
@@ -47,3 +46,4 @@ What is your father's native language?,,,,To do
 "If Yes, are one or both working well now?",,,,To do
 What is your mother's native language?,,,,To do
 Have you got a permanet pacemaker inserted?,,,,To do
+Average height,Height ,90%,,Successfully mapped
