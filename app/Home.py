@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import fsspec
 import duckdb
+import time
 
 fs = fsspec.filesystem("")
 
@@ -134,11 +135,14 @@ def main():
             mapped_variable = st.selectbox('Does this map to any of these variables?', recommended_keys)
             avail_idx = st.radio("Can this variable be mapped to our codebook?",
                                  range(len(mapping_options)),
+                                 index = 1,
                                  format_func=lambda x: mapping_options[x])  # returns index of options
             notes = st.text_input('Notes about this variable:', '')
             submitted = st.form_submit_button(":green[Submit]")
             if submitted:
-                write_to_results(variable_to_map, mapped_variable, notes, avail_idx, results_file)
+                _ = write_to_results(variable_to_map, mapped_variable, notes, avail_idx, results_file)
+                time.sleep(3)
+                st.experimental_rerun()
 
 
 
