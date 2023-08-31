@@ -1,8 +1,9 @@
 # Health Data Harmonisation Platform
 
-This repository contains two primary elements:
-1) A general template being used by the [HE2AT Centre](https://heatcenter.wrhi.ac.za) data harmonisation team, here using the [CINECA synthetic cohort Africa H3ABioNet v1](https://www.cineca-project.eu/synthetic-data/sdc-africa-h3abionet-v1) dataset as an example.
-2) A simple [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variables in the incoming studies to our codebook.
+This is a simple [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variables in the incoming dataset studies to your project’s codebook (which will also be known as target variables).
+
+Currently, it also contains a general template/example being used by the [HE2AT Centre](https://heatcenter.wrhi.ac.za) data harmonisation team, here using the [CINECA synthetic cohort Africa H3ABioNet v1](https://www.cineca-project.eu/synthetic-data/sdc-africa-h3abionet-v1) dataset as an example.
+
 
 ## General work flow:
 
@@ -21,18 +22,56 @@ conda install --file requirements.txt
 jupyter lab
 ```
 
-### Step 1: 
+### Step 1: Adding Target_Variables Codebook 
 
-This platform is built to harmonise incoming datasets to a single study codebook. An example codebook is included in this repository at `codebook/target_codebook.xlsx`. The semi-automated process of mapping incoming dataset variables to this codebook, outlined in this repo, utilises a [text-embedding](https://platform.openai.com/docs/guides/embeddings/what-are-embeddings) approach. The notebook located at `codebook/get_codebook_embeddings.ipynb` is used to standardize the codebook to a csv format and fetches embedding vectors from OpenAI - there is a nominal cost involved in this process. 
+This platform is built to harmonise incoming datasets to a single set of target_variables (codebook). An example codebook is included in this repository at `app/input/target_variables.csv`. In this step, add your target_variables codebook as to `app/input/target_variables.csv`. 
 
 
-### Step 2: 
 
-From here incoming study data is expected to be placed into the `data/{study}` folder. Where `{study}` is the codename used for respective studies going forward. Accompanying study documents are placed into the `data/study_docs` folder and study data is placed into the `data/raw` folder. The cookbook style notebooks located at `data/{study}/code/to_csv.ipynb` and  `data/{study}/code/get_vars.ipynb` are used to populate the `data/csv` and `data/metadata` folders respectively. 
+The semi-automated process of mapping incoming dataset variables to this codebook, outlined in this repo, utilises a [text-embedding](https://platform.openai.com/docs/guides/embeddings/what-are-embeddings) approach. 
 
-### Step 3: 
+In Step 3, the notebook located at `app/preprocess/get_recommendations.ipynb` is used to fetch embedding vectors from OpenAI - there is a nominal cost involved in this process. Embedding vectors for the target_variables are saved in `app/preprocess/output/target_variables_with_embeddings.csv`. 
 
-The notebook located at `code/01_progress_monitor.ipynb` can be used to track the progress of steps 1-3. Once all studies have been converted to csv format and variable names and abbreviations extracted the notebook at `code/02_generate_synthetic_data.ipynb` can be used to generate a randomized dataset for each study. This is used for the mapping interface. Next the notebook at `code/03_ontology_recommendation_engine.ipynb` is used to to first fetch embedding vectors for the incoming study variables before ranking the codebook variables from most to least similar for each incoming study variable. 
+
+
+### Step 2: Adding Incoming Dataset Files to Input Folder
+
+From here incoming dataset files are expected to be placed into the `app/input/{dataset}` folder. Where `{dataset}` is the codename used for respective datasets going forward. There are three files which must be included into this folder. 
+
+- dataset_variables.csv
+- example_data.csv 
+- description.txt (optional) 
+
+Dataset_variables
+- File Format: .csv
+- File Contains: variable names or descriptions from the incoming dataset
+2 columns with headers: variable_name, description
+- File Generation: Manual
+
+Example_data
+- File Format: .csv
+- File Contains: 10 rows of data from dataset, including a variety of values 
+- File Generation: ‘Generate_synthetic_data’ script or manual (first 10 rows of data) 
+
+Description File (Optional)
+- File Format: .txt; markdown
+- File Contains: project name, project description
+- File Generation: Manual or from Trello
+
+If no optional description file is provided, then the `{dataset}` name is used, where `{dataset}` is the folder name in `app/input/{dataset}`
+
+Both dataset_variables and example_data are used as the inputs into `get_recommendations.ipynb`
+
+
+### Step 3: Pre-Processing with `get_recommendations.ipynb` 
+
+The notebook at `/app/preprocess/get_recommendations.ipynb` is used to fetch embedding vectors for the dataset variables and target variables. Dataset Variables with embedding vectors are saved as `/app/preprocess/output/{dataset}_variables_with_embeddings.csv`. Target Variables with embedding vectors are saved as `/app/preprocess/output/target_variables_with_embeddings.csv` 
+
+The target_variable_embeddings is only generated if it doesn't already exist {delete file to force re-run}. 
+
+The cosine_similarity between the dataset variables and target variables is calculated, and codebook variables are ranked from most to least similar for each incoming dataset variable. This is saved as `/app/preprocess/output/{dataset}_variables_with_recommendations.csv`. 
+
+
 
 ### Step 4 / TL;DR:
 
@@ -59,4 +98,3 @@ This work is licensed under a
 [cc-by-sa]: http://creativecommons.org/licenses/by-sa/4.0/
 [cc-by-sa-image]: https://licensebuttons.net/l/by-sa/4.0/88x31.png
 [cc-by-sa-shield]: https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg
-
