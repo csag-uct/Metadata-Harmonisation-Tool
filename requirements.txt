@@ -6,3 +6,4 @@ duckdb
 openai
 openpyxl
 streamlit
+scipy
