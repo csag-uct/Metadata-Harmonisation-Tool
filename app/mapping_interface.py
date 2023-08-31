@@ -47,7 +47,7 @@ avail_studies = [f.split('/')[-1] for f in avail_studies
                  if f.split('/')[-1][0] != '.']
 
 with st.sidebar:
-    st.image('heat_lOGO_5_1.png', width=200)
+    st.image('DS-I_logo.png', width=200)
     st.title("Mapping Tool")
     study = st.selectbox('Study', avail_studies)
 
