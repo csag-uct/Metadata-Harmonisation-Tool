@@ -1,94 +1,144 @@
-,variable_name,description
-0,date,"The particular day, month and year an event has happened or will happen."
-1,time (local),The continuum of experience in which events pass from the future through the present to the past.
-2,dob,The calendar date on which a person was born.
-3,country,"A collective generic term that refers here to a wide variety of dependencies, areas of special sovereignty, uninhabited islands, and other entities in addition to the traditional countries or independent states."
-4,patient_id,An alphanumeric identifier assigned to a specific patient.
-5,age_enrolment,"The length of a person's life, stated in years since birth."
-6,race,A geographic ancestral origin category that is assigned to a population group based mainly on physical characteristics that are thought to be distinct and inherent.
-7,sex,The assemblage of physical properties or qualities by which male is distinguished from female; the physical difference between male and female; the distinguishing peculiarity of male or female.
-8,height,The vertical measurement or distance from the base to the top of an object; the vertical dimension of extension.
-9,weight,The weight of a subject.
-10,bmi,An individual's weight in kilograms divided by the square of the height in meters.
-11,study_location,"A position, site, or point in space where something can be found."
-12,participant_address,"A standardized representation of the location of a person, business, building, or organization."
-13,housing_type,The classification of a residential structure
-14,num_people_household,Number in household
-15,aircon_access,A exposure event involving the interaction of an exposure receptor to the condition of air conditioning unit.
-16,income,"A gain or recurrent benefit during a period of time, usually measured in money that derives from capital or labor."
-17,house_income,A demographic parameter indicating the amount of earnings made by a family.
-18,substance_abuse_preg,A question whether there was maternal substance abuse during pregnancy.
-19,substance_abuse_preg,"Maladaptive pattern of drug or alcohol use that may lead to social, occupational, psychological, or physical problems."
-20,smoking_status,An indication of a person's current tobacco and nicotine consumption as well as some indication of smoking history.
-21,alcohol_status,"The use of alcoholic beverages to excess, either on individual occasions (""binge drinking"") or as a regular practice."
-22,employment,The state of a person with regard to earning wages or salary.
-23,education_years,"An indication of the years of schooling completed in graded public, private, or parochial schools, and in colleges, universities, or professional schools."
-24,loss_to_follow_up,The subject was not available for follow-up procedures.
-25,hypertension,Blood pressure that is abnormally high.
-26,hypertension_preg,A hypertensive disorder that develops during pregnancy.
-27,hellp_syndrome,"Severe preeclampsia associated with any of the following findings: thrombocytopenia (platelets less than 100,000 per microliter), impaired liver function (twice normal elevation of hepatic transaminases; severe, persistent right upper quadrant or epigastric pain), progressive renal insufficiency (serum creatinine greater than 1.1 mg/dL or doubling of baseline in the absence of other renal disease), pulmonary edema, or new-onset cerebral or visual disturbances."
-28,eclampsia,A potentially life-threatening pregnancy-related disorder characterized by tonic-clonic seizures in association with hypertension after the twentieth week of gestation and up to six weeks postpartum and in the absence of other potential causes of seizures.
-29,preeclampsia,"A systolic blood pressure of 140 mmHg or higher, or a diastolic blood pressure of 90 mmHg or higher on two occasions at least 4 hours apart (or greater than or equal to 160/110 mmHg within a short interval) after 20 weeks of gestation in a woman with previously normal blood pressure. It may present with proteinuria but if not, it may be associated with thrombocytopenia, impaired liver function, progressive renal insufficiency, pulmonary edema, or new-onset cerebral or visual disturbances."
-30,preeclampsia_severe,"Preeclampsia with a systolic blood pressure of 160 mmHg or higher, or a diastolic blood pressure of 110 mmHg or higher on two occasions at least 4 hours apart while on bedrest. It is associated with thrombocytopenia (platelets less than 100,000 per microliter), impaired liver function (twice normal elevation of hepatic transaminases; severe, persistent right upper quadrant or epigastric pain), progressive renal insufficiency (serum creatinine greater than 1.1 mg/dL or doubling of baseline in the absence of other renal disease), pulmonary edema, or new-onset cerebral or visual disturbances."
-31,antepartum_haemorrahge,Excessive blood loss prior to onset of labor.
-32,postpartum_haemorrahge,Hemorrhage defined as a blood loss in excess of 500 mL after vaginal delivery or more than 1000 mL after a cesarean delivery.
-33,placenta_praevia,A placenta disease that is characterized by placenta attachment to the uterine wall close to or covering the cervix. Abnormal placentation in which the placenta implants in the lower segment of the uterus (the zone of dilation) and may cover part or all of the opening of the cervix. It is often associated with serious antepartum bleeding and premature labor.
-34,abruptio_praevia,"Placental separation from the uterus with bleeding (concealed or vaginal) before fetal birth, with or without maternal/fetal compromise. (reVITALize)"
-35,duration_of_labour, Intrapartum (qualifier value)
-36,pprom,Spontaneous rupture of fetal membranes that occurs before the onset of labor and before 37 weeks.
-37,prom,Spontaneous rupture of fetal membranes that occurs before the onset of labor. If rupture occurs before 37 weeks of gestation then the correct diagnosis is preterm premature rupture of membranes.
-38,mode_of_delivery,Description of the method by which a fetus is delivered.
-39,dm,A metabolic disorder characterized by abnormally high blood sugar levels due to diminished production of insulin or insulin resistance/desensitization.
-40,gestational_dm,Carbohydrate intolerance first diagnosed during pregnancy.
-41,number_of_foetuses,"A measurement of the total number of fetuses, which includes alive and dead fetuses, present in the uterus."
-42,post_term_birth,Birth at greater than or equal to 42 weeks and 0 days.
-43,term_birth,Birth at greater than or equal to 37 weeks using best estimated due date.
-44,prem_birth,Birth when a fetus is less than 37 weeks and 0 days gestational age.
-45,extreme_prem_birth,Birth when a fetus is less than 28 weeks gestational age.
-46,very_prem_birth,Birth when a fetus is between 28 weeks and less than 32 weeks gestational age.
-47,late_prem_birth,Birth when a fetus is between 34 weeks and 0 days through 36 weeks and 6 days gestational age.
-48,gestational_age_unknown,"Gestational age not reported, or known."
-49,gest_age_delivery,The gestational age of the subject at birth.
-50,gest_age_delivery,The gestational age of the subject at birth.
-51,method_ga_estim_level1,GAIA Level 1 Assessment of Gestational Age is defined by the presence of at least one of the following criteria: a) the last menstrual period (LMP) or intrauterine insemination (IUI) date or embryo transfer (ET) date with confirmatory first trimester scan (less than or equal to 13 6/7 weeks); OR b) first trimester scan (less than or equal to 13 6/7 weeks).
-52,method_ga_estim_level2a,"GAIA Level 2a Assessment of Gestational Age is defined by the presence of at least one of the following criteria: a) Certain last menstrual period (LMP) date with second trimester scan (14 0/7 weeks to 27 6/7 weeks), (If LMP and ultrasound (U/S) do not correlate, default to U/S GA assessment); OR b) Certain LMP date with first trimester physical examination."
-53,method_ga_estim_level2b,GAIA Level 2b Assessment of Gestational Age is defined by the following criteria: uncertain last menstrual period (LMP) date with second trimester scan (14 0/7 weeks to 27 6/7 weeks).
-54,method_ga_estim_level3a,GAIA Level 3a Assessment of Gestational Age is defined by the presence at least one of the following criteria: a) Certain last menstrual period (LMP) date with third trimester scan (28 0/7 weeks or more); OR b) Certain LMP date with confirmatory second trimester fundal height (FH); OR c) Certain LMP date with birth weight; OR d) Uncertain LMP date with first trimester physical examination.
-55,method_ga_estim_level3b,GAIA Level 3b Assessment of Gestational Age is defined by the presence of at least one of the following criteria: a) Uncertain last menstrual period (LMP) date with fundal height (FH); OR b) Uncertain LMP date with newborn physical assessment; OR c) Uncertain LMP date with birth weight.
-56,method_ga_estim_level,A classification of gestational age levels developed by the Global Alignment of Immunization safety Assessment in pregnancy.
-57,birth_weight,The first weight of a newborn obtained after birth.
-58,low_birth_weight,A birth weight that is less than 2500 grams.
-59,very_low_birth_weight,Birth weight less than 1500 grams.
-60,extremely_low_birth_weight,Birth weight less than 1000 grams.
-61,small_gest_age,A newborn infant who has weight and/or length at birth more than two standard deviations below the mean for the reference population of the same sex and gestational age.
-62,stillbirth,"A fetus of at least 20 weeks gestation, or of a birth weight of at least 350 grams if the gestational age is unknown, that is born without signs of life at the time of delivery, and with an Apgar score of zero at both one and five minutes."
-63,stillbirth_type,"Antepartum stillbirth: Fetal death greater than or equal to 20 weeks of gestation prior to labor with Apgar scores of 0 at 1 minute, 5 minutes and beyond. Intrapartum stillbirth: Fetal death greater than or equal to 20 weeks of gestation during labor with Apgar scores of 0 at 1 minute, 5 minutes and beyond."
-64,IUGR,A fetus that does not grow beyond the 10th percentile of conventionally accepted weight for gestational age.
-65,stunting,"Stunting is the impaired growth and development that children experience from poor nutrition, repeated infection, and inadequate psychosocial stimulation. Children are defined as stunted if their height-for-age is more than two standard deviations below the WHO Child Growth Standards median."
-66,congenital_abn,"Congenital disorders can be defined as structural or functional anomalies that occur during intrauterine life. Also called birth defects, congenital anomalies or congenital malformations, these conditions develop prenatally and may be identified before or at birth, or later in life."
-67,apgar,"The numerical sum between zero and ten that is computed from individual values of zero to two that are assigned to five different areas of interest in newborn screenings. These areas are breathing, muscle tone, pulse rate, reflex irritability and skin color."
-68,death,"Death is the permanent cessation of all biological functions that sustain a living, physical organism."
-69,infant_mortality ,Any disease or condition resulting in postnatal death before age 1 yr. (NCI)
-70,perinatal_mortality ,"Fetal or infant death during the period of time that includes the antepartum, intrapartum, and neonatal stages."
-71,neonatal_mortality_early,Death of a live newborn during the first 7 days of life.
-72,neonatal_mortality_late,Death of live newborn between 7and 27 days after birth.
-73,hospital_admission,The confinement of a patient in a hospital.
-74,gastroenteritis ,"An inflammatory disorder that affects the upper and lower gastrointestinal tract. Most commonly, this is attributed to viruses; however bacteria, parasites or adverse reactions can also be the culprit. Symptoms include acute diarrhea and vomiting."
-75,pneumonia ,"An acute, acute and chronic, or chronic inflammation focally or diffusely affecting the lung parenchyma, due to infections (viruses, fungi, mycoplasma, or bacteria), treatment (e.g. radiation), or exposure (inhalation) to chemicals. Symptoms include cough, shortness of breath, fevers, chills, chest pain, headache, sweating, and weakness.…"
-76,urinary_tract_infection,"A bacterial infectious process affecting any part of the urinary tract, most commonly the bladder and the urethra. Symptoms include urinary urgency and frequency, burning sensation during urination, lower abdominal discomfort, and cloudy urine."
-77,groupb_strep_infection ,"Group B Streptococcus, also known as Streptococcus agalactiae, colonizes the vaginal and gastrointestinal tracts of up to 45% of healthy women and may infect neonates in utero or during delivery, causing neonatal sepsis in 1-2% of colonized neonates. GBS infection may also occur in nonpregnant (particularly elderly) adults with underlying medical conditions, presenting as urinary tract infection, pneumonia, or soft-tissue infection. [ NCI ]"
-78,neonatal_sepsis ,An infectious disorder of newborn infants that is characterized by a systemic inflammatory response most commonly caused by bacteria.
-79,syphilis_status,"A contagious bacterial infection caused by the spirochete Treponema pallidum. It is a sexually transmitted disorder, although it can also be transmitted from the mother to the fetus in utero. Typically, it is initially manifested with a single sore which heals without treatment. If the infection is left untreated, the initial stage is followed by skin rash and mucous membrane lesions. A late stage follows, which is characterized by damage of the internal organs, including the nervous system."
-80,hiv_status,The result of testing to determine if an individual is infected with the human immunodeficiency virus.
-81,HepB_status,A viral infection caused by the hepatitis B virus.
-82,schistosomiasis_status,"A parasitic infection caused by flukes of the genus Schistosoma. Signs and symptoms include fever, abdominal pain, eosinophilia and hepatosplenomegaly. If left untreated it may eventually cause liver damage leading to cirrhosis, bladder cancer and kidney failure."
-83,tb_status,"A chronic, recurrent infection caused by the bacterium Mycobacterium tuberculosis. Tuberculosis (TB) may affect almost any tissue or organ of the body with the lungs being the most common site of infection. The clinical stages of TB are primary or initial infection, latent or dormant infection, and recrudescent or adult-type TB. Ninety to 95% of primary TB infections may go unrecognized. Histopathologically, tissue lesions consist of granulomas which usually undergo central caseation necrosis. Local symptoms of TB vary according to the part affected; acute symptoms include hectic fever, sweats, and emaciation; serious complications include granulomatous erosion of pulmonary bronchi associated with hemoptysis. If untreated, progressive TB may be associated with a high degree of mortality. This infection is frequently observed in immunocompromised individuals with AIDS or a history of illicit IV drug use."
-84,haemoglobin,"The red respiratory protein of erythrocytes, consisting of approximately 3.8% heme and 96.2% globin (64.5 KD), which as oxyhemoglobin (HbO2) transports oxygen from the lungs to the tissues where the oxygen is readily released and HbO2 becomes Hb."
-85,creat,"The breakdown product of creatine, a constituent of muscle tissue, that is excreted by the kidney and whose serum level is used to evaluate kidney function."
-86,creat_clearance,"The determination of the clearance of endogenous creatinine, used for evaluating the glomerular filtration rate."
-87,hiv_vl,The determination of the HIV viral load in a specimen.
-88,cd4,The determination of the amount of the CD4 expressing cells in a sample.
-89,plt,The determination of the number of platelets in a biospecimen.
-90,ast,A quantitative measurement of aspartate aminotransferase present in a sample.
-91,alt,A quantitative measurement of alanine aminotransferase present in a sample.
-92,urine_pcr,The determination of the ratio of total protein compared to creatinine present in a sample. The measurement may be expressed as a ratio or percentage.
+﻿variable_name,description
+date,Date
+time (local),Time
+dob,Birth Date
+country,Country
+patient_id,Patient Identifier
+age_enrolment,Age-Years
+race,Race
+sex,Sex
+height,Height
+weight,Body Weight
+bmi,Body Mass Index
+study_location,Location
+participant_address,Address
+housing_type,Housing Type
+num_people_household,Number in household (observable entity)
+aircon_access,exposure to air conditioning unit
+income,Income
+house_income,Household Income
+substance_abuse_preg,Maternal Substance Abuse during Pregnancy
+substance_abuse,Substance Abuse
+smoking_status,Smoking Status
+alcohol_status,Alcohol Abuse
+employment,Employment Status
+education_years,Education Level
+loss_to_follow_up,Lost To Follow-Up
+hypertension,Hypertension
+hypertension_preg,Hypertension-Associated Pregnancy Disorder
+hellp_syndrome,HELLP Syndrome
+eclampsia,Eclampsia
+preeclampsia,Preeclampsia
+preeclampsia_severe,Severe Preeclampsia
+antepartum_haemorrahge,Antepartum Hemorrhage
+postpartum_haemorrahge,postpartum hemorrhage
+placenta_praevia,placenta praevia
+abruptio_praevia,Placental Abruption
+duration_of_labour,Intrapartum (qualifier value)
+pprom,Preterm Premature Rupture of Membrane
+prom,Premature rupture of membranes
+mode_of_delivery,Delivery Procedure
+dm,Diabetes Mellitus
+gestational_dm,Gestational Diabetes
+number_of_foetuses,Number of Fetuses
+post_term_birth,Post Term Birth
+term_birth,Term Birth
+prem_birth,Preterm Birth
+extreme_prem_birth,Extreme Preterm Birth
+very_prem_birth,Very Preterm Birth
+late_prem_birth,Late Preterm Birth
+gestational_age_unknown,Gestational age unknown (finding)
+gest_age_delivery,Gestational Age at Birth
+gest_age_delivery,Gestational Age at Birth
+method_ga_estim_level1,GAIA Level 1 Assessment of Gestational Age
+method_ga_estim_level2a,GAIA Level 2a Assessment of Gestational Age
+method_ga_estim_level2b,GAIA Level 2b Assessment of Gestational Age
+method_ga_estim_level3a,GAIA Level 3a Assessment of Gestational Age
+method_ga_estim_level3b,GAIA Level 3b Assessment of Gestational Age
+method_ga_estim_level,GAIA Gestational Age Levels of Diagnostic Certainty
+birth_weight,Birth Weight
+low_birth_weight,Low Birth Weight
+very_low_birth_weight,Very Low Birth Weight
+extremely_low_birth_weight,Extremely Low Birth Weight
+small_gest_age,Small for Gestational Age
+stillbirth,Stillbirth
+stillbirth_type,Stillbirth Type
+IUGR,Foetal Growth Restriction
+stunting,Nutritional stunting (disorder)
+congenital_abn,Congenital Abnormalities
+apgar,Apgar Score
+death,Death Indicator
+infant_mortality,Infant Mortality
+perinatal_mortality,Perinatal Mortality
+neonatal_mortality_early,Early Neonatal Death
+neonatal_mortality_late,Late Neonatal Death
+hospital_admission,Hospitalization
+gastroenteritis,Gastroenteritis
+pneumonia,Pneumonia
+urinary_tract_infection,Urinary Tract Infection
+groupb_strep_infection,Group B Streptococcus Infection
+neonatal_sepsis,Neonatal Sepsis
+syphilis_status,Syphilis
+hiv_status,HIV Status
+HepB_status,Hepatitis B Infection
+schistosomiasis_status,Schistosomiasis
+tb_status,Tuberculosis
+haemoglobin,Hemoglobin
+creat,Creatinine
+creat_clearance,Creatinine Clearance
+hiv_vl,HIV Viral Load Measurement
+cd4,CD4 Expressing Cell Count
+plt,Platelet Count
+ast,Aspartate Aminotransferase Measurement
+alt,Alanine Aminotransferase Measurement
+urine_pcr,Protein to Creatinine Ratio Measurement
+alp,Alkaline Phosphatase Measurement
+ggt,Gamma Glutamyl Transpeptidase Measurement
+mcv,mean corpuscular volume
+ferritin,Ferritin Measurement
+mchc,mean corpuscular hemoglobin concentration
+hiv_resistance_mutations,Viral Resistance Domain
+hiv_drug_resistance,Drug resistance to antiretroviral therapy (disorder)
+art_regimen,Highly Active Antiretroviral Therapy
+art_adherance,Noncompliance with antiretroviral medication regimen (finding)
+xray_findings,Study Subject Radiography Report
+oligohydramnios,Oligohydramnios
+tsh,thyroid stimulating hormone measurement
+lrti,Lower Respiratory Tract Infection
+urti,Upper Respiratory Tract Infection
+direct_bili,Direct Bilirubin Measurement
+indirect_bili,Indirect Bilirubin Measurement
+amylase,Amylase Measurement
+lipase,Lipase Measurement
+cholesterol,Cholesterol Measurement
+mch,mean corpuscular hemoglobin
+ldlc,Low Density Lipoprotein Cholesterol Measurement
+hdlc,High Density Lipoprotein Cholesterol Measurement
+hba1c,Glycosylated Hemoglobin Measurement
+albumin,Albumin Measurement
+cortisol,Cortisol Measurement
+pth,Whole Parathyroid Hormone Measurement
+ft4,Free Thyroxine Measurement
+ft3,Free Triiodothyronine Measurement
+urea,Blood Urea Nitrogen Measurement
+calcium,Calcium Measurement
+dexa_scan,Bone Mineral Density Z-Score
+uric_acid,Serum Uric Acid Measurement
+potassium,Potassium Measurement
+sodium,Sodium Measurement
+covid_19_pcr,COVID-19 RT-PCR assay
+crp,C-Reactive Protein Measurement
+pct,Procalcitonin Measurement
+il-6,interleukin-6 measurement
+inr,International Normalized Ratio
+d_dimers,D-Dimer Measurement
+depression,Unipolar Depression
+gen_anxiety_disorder,Generalized Anxiety Disorder
+adverse_event,Adverse Event
+heart_rate,Heart Rate
+systolic_blood_pressure,Systolic Blood Pressure
+diastolic_blood_pressure,Diastolic Blood Pressure
+mean_arterial_pressure,Mean Arterial Pressure
+oxygen_saturation,Oxygen Saturation Measurement
+stroke,Stroke
+myocardial_infarct,Myocardial Infarction
