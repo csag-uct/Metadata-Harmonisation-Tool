@@ -1,0 +1,3 @@
+The H3ABioNet synthetic data was created using a modified version of tofu (https://github.com/spiros/tofu), using a database of fields and values/encodings.
+We used the H3Africa Core phenotype data dictionary to generate new database fields and encodings to mimic African data.
+

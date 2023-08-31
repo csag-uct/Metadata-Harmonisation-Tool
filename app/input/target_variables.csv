@@ -1,0 +1,144 @@
+﻿variable_name,description
+date,Date
+time (local),Time
+dob,Birth Date
+country,Country
+patient_id,Patient Identifier
+age_enrolment,Age-Years
+race,Race
+sex,Sex
+height,Height
+weight,Body Weight
+bmi,Body Mass Index
+study_location,Location
+participant_address,Address
+housing_type,Housing Type
+num_people_household,Number in household (observable entity)
+aircon_access,exposure to air conditioning unit
+income,Income
+house_income,Household Income
+substance_abuse_preg,Maternal Substance Abuse during Pregnancy
+substance_abuse,Substance Abuse
+smoking_status,Smoking Status
+alcohol_status,Alcohol Abuse
+employment,Employment Status
+education_years,Education Level
+loss_to_follow_up,Lost To Follow-Up
+hypertension,Hypertension
+hypertension_preg,Hypertension-Associated Pregnancy Disorder
+hellp_syndrome,HELLP Syndrome
+eclampsia,Eclampsia
+preeclampsia,Preeclampsia
+preeclampsia_severe,Severe Preeclampsia
+antepartum_haemorrahge,Antepartum Hemorrhage
+postpartum_haemorrahge,postpartum hemorrhage
+placenta_praevia,placenta praevia
+abruptio_praevia,Placental Abruption
+duration_of_labour,Intrapartum (qualifier value)
+pprom,Preterm Premature Rupture of Membrane
+prom,Premature rupture of membranes
+mode_of_delivery,Delivery Procedure
+dm,Diabetes Mellitus
+gestational_dm,Gestational Diabetes
+number_of_foetuses,Number of Fetuses
+post_term_birth,Post Term Birth
+term_birth,Term Birth
+prem_birth,Preterm Birth
+extreme_prem_birth,Extreme Preterm Birth
+very_prem_birth,Very Preterm Birth
+late_prem_birth,Late Preterm Birth
+gestational_age_unknown,Gestational age unknown (finding)
+gest_age_delivery,Gestational Age at Birth
+gest_age_delivery,Gestational Age at Birth
+method_ga_estim_level1,GAIA Level 1 Assessment of Gestational Age
+method_ga_estim_level2a,GAIA Level 2a Assessment of Gestational Age
+method_ga_estim_level2b,GAIA Level 2b Assessment of Gestational Age
+method_ga_estim_level3a,GAIA Level 3a Assessment of Gestational Age
+method_ga_estim_level3b,GAIA Level 3b Assessment of Gestational Age
+method_ga_estim_level,GAIA Gestational Age Levels of Diagnostic Certainty
+birth_weight,Birth Weight
+low_birth_weight,Low Birth Weight
+very_low_birth_weight,Very Low Birth Weight
+extremely_low_birth_weight,Extremely Low Birth Weight
+small_gest_age,Small for Gestational Age
+stillbirth,Stillbirth
+stillbirth_type,Stillbirth Type
+IUGR,Foetal Growth Restriction
+stunting,Nutritional stunting (disorder)
+congenital_abn,Congenital Abnormalities
+apgar,Apgar Score
+death,Death Indicator
+infant_mortality,Infant Mortality
+perinatal_mortality,Perinatal Mortality
+neonatal_mortality_early,Early Neonatal Death
+neonatal_mortality_late,Late Neonatal Death
+hospital_admission,Hospitalization
+gastroenteritis,Gastroenteritis
+pneumonia,Pneumonia
+urinary_tract_infection,Urinary Tract Infection
+groupb_strep_infection,Group B Streptococcus Infection
+neonatal_sepsis,Neonatal Sepsis
+syphilis_status,Syphilis
+hiv_status,HIV Status
+HepB_status,Hepatitis B Infection
+schistosomiasis_status,Schistosomiasis
+tb_status,Tuberculosis
+haemoglobin,Hemoglobin
+creat,Creatinine
+creat_clearance,Creatinine Clearance
+hiv_vl,HIV Viral Load Measurement
+cd4,CD4 Expressing Cell Count
+plt,Platelet Count
+ast,Aspartate Aminotransferase Measurement
+alt,Alanine Aminotransferase Measurement
+urine_pcr,Protein to Creatinine Ratio Measurement
+alp,Alkaline Phosphatase Measurement
+ggt,Gamma Glutamyl Transpeptidase Measurement
+mcv,mean corpuscular volume
+ferritin,Ferritin Measurement
+mchc,mean corpuscular hemoglobin concentration
+hiv_resistance_mutations,Viral Resistance Domain
+hiv_drug_resistance,Drug resistance to antiretroviral therapy (disorder)
+art_regimen,Highly Active Antiretroviral Therapy
+art_adherance,Noncompliance with antiretroviral medication regimen (finding)
+xray_findings,Study Subject Radiography Report
+oligohydramnios,Oligohydramnios
+tsh,thyroid stimulating hormone measurement
+lrti,Lower Respiratory Tract Infection
+urti,Upper Respiratory Tract Infection
+direct_bili,Direct Bilirubin Measurement
+indirect_bili,Indirect Bilirubin Measurement
+amylase,Amylase Measurement
+lipase,Lipase Measurement
+cholesterol,Cholesterol Measurement
+mch,mean corpuscular hemoglobin
+ldlc,Low Density Lipoprotein Cholesterol Measurement
+hdlc,High Density Lipoprotein Cholesterol Measurement
+hba1c,Glycosylated Hemoglobin Measurement
+albumin,Albumin Measurement
+cortisol,Cortisol Measurement
+pth,Whole Parathyroid Hormone Measurement
+ft4,Free Thyroxine Measurement
+ft3,Free Triiodothyronine Measurement
+urea,Blood Urea Nitrogen Measurement
+calcium,Calcium Measurement
+dexa_scan,Bone Mineral Density Z-Score
+uric_acid,Serum Uric Acid Measurement
+potassium,Potassium Measurement
+sodium,Sodium Measurement
+covid_19_pcr,COVID-19 RT-PCR assay
+crp,C-Reactive Protein Measurement
+pct,Procalcitonin Measurement
+il-6,interleukin-6 measurement
+inr,International Normalized Ratio
+d_dimers,D-Dimer Measurement
+depression,Unipolar Depression
+gen_anxiety_disorder,Generalized Anxiety Disorder
+adverse_event,Adverse Event
+heart_rate,Heart Rate
+systolic_blood_pressure,Systolic Blood Pressure
+diastolic_blood_pressure,Diastolic Blood Pressure
+mean_arterial_pressure,Mean Arterial Pressure
+oxygen_saturation,Oxygen Saturation Measurement
+stroke,Stroke
+myocardial_infarct,Myocardial Infarction
