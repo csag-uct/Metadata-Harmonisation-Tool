@@ -94,19 +94,19 @@ if not fs.exists(results_file):
     empty_df['marked'] = 'To do'
     empty_df.to_csv(results_file, index=False)
 
-agree = st.checkbox('Show all variables in original study order')
 # get variables
-if agree:
-    variables = vars_unsorted
-else:
-    variables_status = st.selectbox('View variables:',mapping_options)
-    # query results file
-    variables = duckdb.sql(f"""SELECT study_var
-                        FROM '{results_file}'
-                        WHERE marked = '{variables_status}'""")
-    # coerce db output to list
-    variables = list(variables.fetchdf()['study_var'].values)
+variables_status = st.selectbox('View variables:',mapping_options)
+# query results file
+variables = duckdb.sql(f"""SELECT study_var
+                    FROM '{results_file}'
+                    WHERE marked = '{variables_status}'""")
+# coerce db output to list
+variables = list(variables.fetchdf()['study_var'].values)
 
+# sort in original order if requested
+agree = st.checkbox('Show variables in original study order (default is easiest to hardest to map)')
+if agree:
+    variables = [x for x in vars_unsorted if x in variables]
 
 if len(variables) == 0:
     st.write(f'No variables have been marked: :red[{variables_status}]')
