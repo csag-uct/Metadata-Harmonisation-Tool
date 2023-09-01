@@ -158,5 +158,5 @@ else:
         submitted = st.form_submit_button(":green[Submit]")
         if submitted:
             _ = write_to_results(variable_to_map, mapped_variable, notes, avail_idx, results_file)
-            time.sleep(3)
+            time.sleep(0.5)
             st.experimental_rerun()
