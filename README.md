@@ -1,4 +1,4 @@
-# Health Data Harmonisation Platform
+# Metadata Harmonisation Tool
 
 This is a simple [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variables in the incoming dataset studies to your project’s codebook (which will also be known as target variables).
 
