@@ -98,7 +98,7 @@ if not fs.exists(results_file):
 variables_status = st.selectbox('View variables:',mapping_options)
 # query results file
 variables = duckdb.sql(f"""SELECT study_var
-                    FROM '{results_file}'
+                    FROM read_csv_auto('{results_file}', delim = ',', header = True)
                     WHERE marked = '{variables_status}'""")
 # coerce db output to list
 variables = list(variables.fetchdf()['study_var'].values)
@@ -116,7 +116,7 @@ else:
     # previous info
     st.write('The following information has previously been recorded:')
     st.write(duckdb.sql(f"""SELECT *
-                        FROM '{results_file}'
+                        FROM read_csv_auto('{results_file}', delim = ',', header = True)
                         WHERE study_var = '{variable_to_map}'""").fetchdf())
 
     # information about variable
