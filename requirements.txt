@@ -7,3 +7,7 @@ openai
 openpyxl
 streamlit
 scipy
+tiktoken
+langchain
+pdfminer.six
+python-dotenv
