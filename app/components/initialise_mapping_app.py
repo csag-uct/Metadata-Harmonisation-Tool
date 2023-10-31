@@ -1,8 +1,12 @@
 import streamlit as st
 import fsspec
 
+import time
+
 from .get_recommendations import get_embeddings, get_recommendations, embed_codebook
 from .generate_descriptions import generate_descriptions_with_context, generate_descriptions_without_context, convert_pdf_to_txt
+
+from dotenv import dotenv_values
 
 fs = fsspec.filesystem("")
 
@@ -19,6 +23,21 @@ def delete_files_and_folders(directory_path):
             fs.rm(item)
 
 def initialise_mapping_recommendations():
+    config = dotenv_values(".env")
+    if 'OpenAI_api_key' not in list(config):
+        st.write(":red[No OpenAI key detected, please insert a key below]")
+        OpenAI_api_key = st.text_input("OpenAI_api_key", value="", type = "password")
+        submit = st.button("Add Key")
+        if submit:
+            with open(".env", 'a+') as file:
+                lines = file.readlines()
+            lines.insert(0, f"OpenAI_api_key={OpenAI_api_key}")
+            with open(".env", 'w') as file:
+                file.writelines(lines) 
+            st.experimental_rerun()
+    else:
+        st.write(f":green[OpenAI_api_key detected :white_check_mark:]")
+    
     if fs.exists(f'{input_path}/target_variables.csv'):
         if fs.exists(f'{input_path}/target_variables_with_embeddings.csv'):
             st.write(":green[Codebook Uploaded and Embeddings Fetched :white_check_mark:]")
@@ -44,7 +63,6 @@ def initialise_mapping_recommendations():
     run = st.button("Run Recomendation Engine")
     if run:
         with st.spinner('Phoning a friend :coffee:...'):
-            embed_codebook()
             convert_pdf_to_txt()
             generate_descriptions_without_context()
             generate_descriptions_with_context()
@@ -53,9 +71,6 @@ def initialise_mapping_recommendations():
             st.experimental_rerun()
 
     st.divider()
-
-    # reset = st.button(":red[Reset Recommendations]")
-    # if reset:
 
     clear = st.button(":red[Clear Workspace]")
     if clear:

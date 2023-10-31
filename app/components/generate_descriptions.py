@@ -8,14 +8,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from scipy import spatial
 
-import os
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
-load_dotenv() 
-
-OpenAI_api_key = os.environ.get('OpenAI_api_key')
-openai.api_key = OpenAI_api_key
-embedding_model = "text-embedding-ada-002"
 
 results_path = "results"
 input_path = "input"
@@ -86,6 +80,9 @@ def convert_pdf_to_txt():
 # the below two functions should be merged too lazy for the minute
 
 def generate_descriptions_without_context():
+    config = dotenv_values(".env")
+    OpenAI_api_key = config['OpenAI_api_key']
+    openai.api_key = OpenAI_api_key
     avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
     avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.'] # strip path and remove hidden folders
     print(avail_studies)
@@ -138,6 +135,9 @@ def generate_descriptions_without_context():
 
 
 def generate_descriptions_with_context():
+    config = dotenv_values(".env")
+    OpenAI_api_key = config['OpenAI_api_key']
+    openai.api_key = OpenAI_api_key
     avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
     avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.'] # strip path and remove hidden folders
     # skip already done
