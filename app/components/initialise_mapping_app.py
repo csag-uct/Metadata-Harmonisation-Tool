@@ -22,21 +22,59 @@ def delete_files_and_folders(directory_path):
         else:
             fs.rm(item)
 
+def modify_env(key,value=None, delete = False):
+    if not fs.exists(".env"):
+        with open(".env", 'w'):
+            pass 
+    with open(".env", 'r') as file:
+        lines = file.readlines()
+    if not delete:
+        line_replaced = False
+        for i in range(len(lines)):
+            if lines[i].startswith(key):
+                lines[i] = key + '=' + value + '\n'
+                line_replaced = True
+                break
+        if not line_replaced:
+            lines.append(key + '=' + value + '\n')
+    else:
+        for i in range(len(lines)):
+            if lines[i].startswith(key):
+                lines[i] = ""
+    with open(".env", 'w') as file:
+        file.writelines(lines)
+
 def initialise_mapping_recommendations():
     config = dotenv_values(".env")
+
     if 'OpenAI_api_key' not in list(config):
         st.write(":red[No OpenAI key detected, please insert a key below]")
         OpenAI_api_key = st.text_input("OpenAI_api_key", value="", type = "password")
         submit = st.button("Add Key")
         if submit:
-            with open(".env", 'a+') as file:
-                lines = file.readlines()
-            lines.insert(0, f"OpenAI_api_key={OpenAI_api_key}")
-            with open(".env", 'w') as file:
-                file.writelines(lines) 
+            modify_env('OpenAI_api_key', OpenAI_api_key)
             st.experimental_rerun()
     else:
         st.write(f":green[OpenAI_api_key detected :white_check_mark:]")
+        delete = st.button("Delete My API key")
+        if delete:
+            modify_env('OpenAI_api_key',delete = True)
+            st.experimental_rerun()
+    
+    st.divider()
+
+    defailt_init_prompt = "As an AI, you're given the task of translating short variable names from a public health study into the most likely full variable name."
+
+    init_prompt = st.text_input('Initialisation Prompt', value="As an AI, you're given the task of translating short variable names from a public health study into the most likely full variable name.")
+    
+    if 'init_prompt' not in list(config):
+        modify_env('init_prompt',init_prompt)
+    elif list(config) != defailt_init_prompt:
+        modify_env('init_prompt',init_prompt)
+    else:
+        pass
+    
+    st.divider()
     
     if fs.exists(f'{input_path}/target_variables.csv'):
         if fs.exists(f'{input_path}/target_variables_with_embeddings.csv'):

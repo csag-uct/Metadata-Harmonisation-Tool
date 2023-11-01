@@ -13,7 +13,7 @@ fs = fsspec.filesystem("")
 def streamlit_csv_reader(file_up):
     "CSV files are a nightmare this func takes in a streamlit file uploader and returns a pandas df"
     stringio = StringIO(file_up.getvalue().decode("utf-8"))
-    delim = clevercsv.Sniffer().sniff(stringio.read()).delimiter 
+    delim = clevercsv.Sniffer().sniff(stringio.read()).delimiter # type: ignore
     return pd.read_csv(file_up, sep = delim)
 
 def upload_codebook(file_in):

@@ -15,7 +15,6 @@ results_path = "results"
 input_path = "input"
 preprocess_path = "preprocess"
 
-init_prompt = "As an AI, you're given the task of translating short variable names from a set of climate and meteorology datasets into the most likely full variable name given some context. Only return the name no context. Use (?) to signify the description is uncertain."
 
 fs = fsspec.filesystem("")
 
@@ -31,8 +30,7 @@ def get_index(list_in, by):
     elif by == 'max':
         return [index for index, _ in sorted_values[-3:]]
 
-
-def return_prompt_with_example(variable, context, example, example_context, example_description, bad_context):
+def return_prompt_with_example(init_prompt, variable, context, example, example_context, example_description, bad_context):
     prompts = [{"role": "system", "content": f"""{init_prompt} Some context is provided alongside to help."""},
                 {"role": "user", "content": f"variable name:  {example}, context: {example_context}"},
                 {"role": "assistant", "content": f"{example_description}"},
@@ -43,7 +41,7 @@ def return_prompt_with_example(variable, context, example, example_context, exam
     return prompts
 
 
-def return_prompt(variable, context, bad_context, good_context):
+def return_prompt(init_prompt, variable, context, bad_context, good_context):
     prompts = [{"role": "system", 
                 "content": f"""{init_prompt} Some context is provided alongside to help."""},
                 {"role": "user", "content": f"variable name:  Patient ID, context: {good_context}"}, # giving it the least relevent context
@@ -83,6 +81,7 @@ def generate_descriptions_without_context():
     config = dotenv_values(".env")
     OpenAI_api_key = config['OpenAI_api_key']
     openai.api_key = OpenAI_api_key
+    init_prompt = config['init_prompt']
     avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
     avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.'] # strip path and remove hidden folders
     print(avail_studies)
@@ -112,7 +111,7 @@ def generate_descriptions_without_context():
             codebook = {}
             for var in to_do:
                 openai_response = None
-                prompts = return_prompt_no_context(var)
+                prompts = return_prompt_no_context(init_prompt, var)
                 try:
                     openai_response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=prompts)
                 except:
@@ -138,6 +137,8 @@ def generate_descriptions_with_context():
     config = dotenv_values(".env")
     OpenAI_api_key = config['OpenAI_api_key']
     openai.api_key = OpenAI_api_key
+    init_prompt = config['init_prompt']
+    print(init_prompt)
     avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
     avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.'] # strip path and remove hidden folders
     # skip already done
@@ -201,9 +202,9 @@ def generate_descriptions_with_context():
                 openai_response = None
                 context = get_relevent_context(var, relevance_dist = 'min')
                 if example:
-                    prompts = return_prompt_with_example(var, context, example, example_context, example_description, bad_context)
+                    prompts = return_prompt_with_example(init_prompt, var, context, example, example_context, example_description, bad_context)
                 else:
-                    prompts = return_prompt(var, context, bad_context, good_context)
+                    prompts = return_prompt(init_prompt, var, context, bad_context, good_context)
                 # the openai api is a bit unstable this just has two retries 
                 try:
                     openai_response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=prompts)
