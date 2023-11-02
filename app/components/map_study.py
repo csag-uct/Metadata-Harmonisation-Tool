@@ -46,6 +46,7 @@ def map_study(study, variables_status, show_about, original_order):
     if study == None:
         st.write(':red[No Studies Loaded]')
     else:
+        fs.mkdirs(results_path, exist_ok = True)
         results_file = f'{results_path}/{study}.csv'
         study_input_path = f"{input_path}/{study}"
         # about data

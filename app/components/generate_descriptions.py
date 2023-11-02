@@ -52,7 +52,7 @@ def return_prompt(init_prompt, variable, context, bad_context, good_context):
                 ]
     return prompts
 
-def return_prompt_no_context(variable):
+def return_prompt_no_context(init_prompt, variable):
     prompts = [{"role": "system", 
                 "content": f"""{init_prompt}"""},
                 {"role": "user", "content": f"variable name:  Patient ID"}, # giving it the least relevent context
