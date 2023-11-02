@@ -2,7 +2,7 @@ jupyterlab
 numpy
 pandas
 fsspec
-duckdb
+python-duckdb
 openai
 openpyxl
 streamlit
