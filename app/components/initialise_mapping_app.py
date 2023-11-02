@@ -50,16 +50,22 @@ def initialise_mapping_recommendations():
     if 'OpenAI_api_key' not in list(config):
         st.write(":red[No OpenAI key detected, please insert a key below]")
         OpenAI_api_key = st.text_input("OpenAI_api_key", value="", type = "password")
-        submit = st.button("Add Key")
+        submit = st.button("Add Key", key = 'submit')
         if submit:
             modify_env('OpenAI_api_key', OpenAI_api_key)
-            st.experimental_rerun()
+            # I need to use session states the above is a hack to fix death looping 
+            # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
+            del st.session_state['delete'] 
+            st.rerun()
     else:
         st.write(f":green[OpenAI_api_key detected :white_check_mark:]")
-        delete = st.button("Delete My API key")
+        delete = st.button("Delete My API key", key = 'delete')
         if delete:
             modify_env('OpenAI_api_key',delete = True)
-            st.experimental_rerun()
+            del st.session_state['delete'] 
+            # I need to use session states the above is a hack to fix death looping 
+            # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
+            st.rerun()
     
     st.divider()
 
@@ -98,7 +104,7 @@ def initialise_mapping_recommendations():
     else:
          st.write(":red[Please upload a study to map]")
 
-    run = st.button("Run Recomendation Engine")
+    run = st.button("Run Recomendation Engine", key = 'run')
     if run:
         with st.spinner('Phoning a friend :coffee:...'):
             convert_pdf_to_txt()
@@ -106,15 +112,21 @@ def initialise_mapping_recommendations():
             generate_descriptions_with_context()
             get_embeddings()
             get_recommendations()
-            st.experimental_rerun()
+            del st.session_state['run'] 
+            # I need to use session states the above is a hack to fix death looping 
+            # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
+            st.rerun()
 
     st.divider()
 
-    clear = st.button(":red[Clear Workspace]")
+    clear = st.button(":red[Clear Workspace]", key = 'clear')
     if clear:
         delete_files_and_folders("input/")
         delete_files_and_folders("results/")
-        st.experimental_rerun()
+        del st.session_state['clear'] 
+        # I need to use session states the above is a hack to fix death looping 
+        # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
+        st.rerun()
     
 
 

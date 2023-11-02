@@ -2,9 +2,6 @@ import streamlit as st
 import pandas as pd
 import fsspec
 
-from .get_recommendations import get_recommendations
-from .generate_descriptions import generate_descriptions_with_context, generate_descriptions_without_context, convert_pdf_to_txt
-
 import clevercsv
 from io import StringIO
 
@@ -24,7 +21,7 @@ def streamlit_csv_reader(file_up):
 def add_new_study(study_title, study_description, variables, example_data, context_docs):
     variables_df = streamlit_csv_reader(variables)[['variable_name', 'description']]
     study_path = f"{input_path}/{study_title}"
-    fs.mkdir(study_path)
+    fs.mkdirs(study_path, exist_ok = True)
     if study_description:
         with fs.open(f"{study_path}/description.txt", "w") as file:
             file.write(study_description)
@@ -52,4 +49,3 @@ def add_study_page():
         submit = st.form_submit_button(":green[Add New Study]", disabled = disable)
         if submit:
             add_new_study(study_title, study_description, variables, example_data, context_docs)
-            st.experimental_rerun()

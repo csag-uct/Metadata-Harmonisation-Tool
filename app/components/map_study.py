@@ -139,16 +139,17 @@ def map_study(study, variables_status, show_about, original_order):
                 # append confidence to var name
                 recommended_keys = [f"{x} {y}" for x, y in zip(recommended_codebook, recommended_confidence)]
 
-                with st.form("my_form", clear_on_submit=True):
-                    mapped_variable = st.selectbox('Does this map to any of these variables?', recommended_keys)
-                    #st.write(df_codebook.loc[df_codebook['Variable Name'] == mapped_variable.split('  - ')[0]]) # inside form won't update
-                    avail_idx = st.radio("Can this variable be mapped to our codebook?", 
-                                            range(len(mapping_options)),
-                                            index = 1,
-                                            format_func=lambda x: mapping_options[x])  # returns index of options
-                    notes = st.text_input('Notes about this variable:', '')
-                    submitted = st.form_submit_button(":green[Submit]")
-                    if submitted:
-                        _ = write_to_results(variable_to_map, mapped_variable, notes, avail_idx, results_file)
-                        time.sleep(0.5)
-                        st.experimental_rerun()
+                mapped_variable = st.selectbox('Does this map to any of these variables?', recommended_keys)
+                avail_idx = st.radio("Can this variable be mapped to our codebook?", 
+                                        range(len(mapping_options)),
+                                        index = 1,
+                                        format_func=lambda x: mapping_options[x])  # returns index of options
+                notes = st.text_input('Notes about this variable:', '')
+                submitted = st.button(":green[Submit]", key = 'submit')
+                if submitted:
+                    _ = write_to_results(variable_to_map, mapped_variable, notes, avail_idx, results_file)
+                    time.sleep(0.25)
+                    # I need to use session states, the above is a hack to fix death looping 
+                    # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
+                    del st.session_state['submit'] 
+                    st.rerun()
