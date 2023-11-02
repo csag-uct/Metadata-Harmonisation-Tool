@@ -19,6 +19,7 @@ def streamlit_csv_reader(file_up):
 def upload_codebook(file_in):
     target_df = streamlit_csv_reader(file_in)
     target_df= target_df[['variable_name', 'description']]
+    fs.mkdirs(f"{input_path}/", exist_ok = True)
     target_df.to_csv(f"{input_path}/target_variables.csv", index = False)
 
 def upload_codebook_page():
