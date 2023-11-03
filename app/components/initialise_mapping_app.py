@@ -104,7 +104,7 @@ def initialise_mapping_recommendations():
     else:
          st.write(":red[Please upload a study to map]")
 
-    run = st.button("Run Recomendation Engine", key = 'run')
+    run = st.button("Run Recommendation Engine", key = 'run')
     if run:
         with st.spinner('Phoning a friend :coffee:...'):
             convert_pdf_to_txt()
