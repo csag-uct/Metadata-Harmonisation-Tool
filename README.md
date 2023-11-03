@@ -1,8 +1,19 @@
 # Metadata Harmonisation Tool
 
-This is a simple [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variables in the incoming dataset studies to your project’s codebook (which will also be known as target variables).
+This is a [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variables variables names in a dataset to that of a target codebook. The first and often most tedious step in developping a common data model. 
 
-Currently, it also contains a general template/example being used by the [HE2AT Centre](https://heatcenter.wrhi.ac.za) data harmonisation team, here using the [CINECA synthetic cohort Africa H3ABioNet v1](https://www.cineca-project.eu/synthetic-data/sdc-africa-h3abionet-v1) dataset as an example.
+#### <span style="color:red">A video demonstration is avaliable [here](https://drive.google.com/file/d/1fLhKLtDvA_02pvjJYkFjXyDobZA4Y6V8/view?usp=sharing)</span>
+
+## What it does:
+
+The Metadata Harmonisation Interface provides a convenient portal to match variables from an incoming dataset to a target set of ontologies. In this way the tool provides a similar role to that of the [White Rabbit tool](https://github.com/OHDSI/WhiteRabbit) utilised by the OHDSI community. This tool differentiates itself by using Large Language Models to generate variable descriptions where none have been provided and by recommending the most likely target variable to map to. A confidence indication is provided alongside mapping recommendations. This dramatically speeds up the mapping process.
+
+## How it works:
+The Metadata Harmonisation Interface compromises of two key parts:
+
+First the LLM-based description generator provides a way to quickly and easily extract variable description information from complex free text documents such as study protocols or journal articles. While in an ideal world descriptions should come from a codebook and should match to standardised ontologies, in our experience this is often not the case. The description generator works by taking in a PDF document and converting it to plain text using the pdfminer python package. Next, we use a text-splitter from the Llangchain suite of python functions.  This works by recursively  splitting the text by the special characters: "\n\n", "\n", " ” and "” until a text length of 1000 characters is reached. An overlap of 20 character between chunks is preserved to ensure no information is lost between chunks. A text embedding model is then used to get a vector representation of each chunk. This information is stored as a simple Numpy array.  Next a prompt is constructed by taking an already completed variable and description pair and retrieving the most relevant context, calculated as the spatial distance between the chunk embeddings and the variable name embedding. A hard coded variable and description pair alongside the least relevant context is also included with a (?) appended to the description. This is an attempt to get the LLM to return some indication of whether the context has been useful. The prompt template is shown above in figure 3.  This prompt style is known as few-shot prompting. If no context is provided by the user a similar prompt pattern is followed without providing the LLM with context. 
+
+The next step in the process is the ontology recommendation engine. This again uses text embeddings to retrieve vector representations of variable names and descriptions for both the target codebook and incoming datasets. Recommendations are then calculated using the spatial distance between vectors weighted 80/20 to descriptions. The interface utilises DuckDB to retrieve these recommendations from plain csv files. 
 
 
 ## General work flow:
@@ -33,10 +44,6 @@ This should automatically open your browser to this page:
 
 
 User Interface Instructions copied below:
-
-# Metadata Harmonisation Tool]
-
-This is a simple [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variables variables names in a dataset to a of target codebook. The first and often most tedious step in developping a common data model. 
 
 ### General work flow:
 
