@@ -55,7 +55,7 @@ def initialise_mapping_recommendations():
             modify_env('OpenAI_api_key', OpenAI_api_key)
             # I need to use session states the above is a hack to fix death looping 
             # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
-            del st.session_state['delete'] 
+            del st.session_state['submit'] 
             st.rerun()
     else:
         st.write(f":green[OpenAI_api_key detected :white_check_mark:]")
