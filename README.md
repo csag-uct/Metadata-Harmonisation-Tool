@@ -9,87 +9,72 @@ Currently, it also contains a general template/example being used by the [HE2AT 
 
 ### Initialise:
 
-This repository is intended to form the foundation of a jupyter lab based data science platform. To configure this on your local machine follow these instructions:
+If you do not have a preferred python package manager already installed I recommend installing [Micromamba](https://mamba.readthedocs.io/en/latest/micromamba-installation.html#)
 
 ```
 git clone git@github.com:csag-uct/Health_Data_Harmonisation_Platform.git
+
 cd Health_Data_Harmonisation_Platform
 
-conda create --name health_harmonisation
-conda activate health_harmonisation
-conda install --file requirements.txt
 
-jupyter lab
-```
+conda env create -f environment.yml -c conda-forge
+conda activate harmonisation_env
 
-### Step 1: Adding Target_Variables Codebook 
+pip install -r requirements.txt # some packages not available on conda channels
 
-This platform is built to harmonise incoming datasets to a single set of target_variables (codebook). An example codebook is included in this repository at `app/input/target_variables.csv`. In this step, add your target_variables codebook as to `app/input/target_variables.csv`. 
-
-
-
-The semi-automated process of mapping incoming dataset variables to this codebook, outlined in this repo, utilises a [text-embedding](https://platform.openai.com/docs/guides/embeddings/what-are-embeddings) approach. 
-
-In Step 3, the notebook located at `app/preprocess/get_recommendations.ipynb` is used to fetch embedding vectors from OpenAI - there is a nominal cost involved in this process. Embedding vectors for the target_variables are saved in `app/preprocess/output/target_variables_with_embeddings.csv`. 
-
-
-
-### Step 2: Adding Incoming Dataset Files to Input Folder
-
-From here incoming dataset files are expected to be placed into the `app/input/{dataset}` folder. Where `{dataset}` is the codename used for respective datasets going forward. There are three files which must be included into this folder. 
-
-- dataset_variables.csv
-- example_data.csv 
-- description.txt (optional) 
-
-Dataset_variables
-- File Format: .csv
-- File Contains: variable names or descriptions from the incoming dataset
-2 columns with headers: variable_name, description
-- File Generation: Manual
-
-Example_data
-- File Format: .csv
-- File Contains: 10 rows of data from dataset, including a variety of values 
-- File Generation: ‘Generate_synthetic_data’ script or manual (first 10 rows of data) 
-
-Description File (Optional)
-- File Format: .txt; markdown
-- File Contains: project name, project description
-- File Generation: Manual or from Trello
-
-If no optional description file is provided, then the `{dataset}` name is used, where `{dataset}` is the folder name in `app/input/{dataset}`
-
-Both dataset_variables and example_data are used as the inputs into `get_recommendations.ipynb`
-
-
-### Step 3: Pre-Processing with `get_recommendations.ipynb` 
-
-The notebook at `/app/preprocess/get_recommendations.ipynb` is used to fetch embedding vectors for the dataset variables and target variables. Dataset Variables with embedding vectors are saved as `/app/preprocess/output/{dataset}_variables_with_embeddings.csv`. Target Variables with embedding vectors are saved as `/app/preprocess/output/target_variables_with_embeddings.csv` 
-
-The target_variable_embeddings is only generated if it doesn't already exist {delete file to force re-run}. 
-
-The cosine_similarity between the dataset variables and target variables is calculated, and codebook variables are ranked from most to least similar for each incoming dataset variable. This is saved as `/app/preprocess/output/{dataset}_variables_with_recommendations.csv`. 
-
-
-
-### Step 4 / TL;DR:
-
-Once the above has been completed the mapping GUI is ready to be used. (These have already been completed in this example repo). To run the GUI follow these instructions:
-
-```
 cd app/
-streamlit run Home.py
+
+streamlit run mapping_interface.py
 ```
 
 This should automatically open your browser to this page:
 
 ![GUI screenshot](GUI.png)
 
-### step 5:
-Work in progress. 
 
-The intention is that the GUI can be used to create data pipelines that extract and convert mapped variables from the standardised study files to a single harmonised dataset. 
+User Interface Instructions copied below:
+
+# Metadata Harmonisation Tool]
+
+This is a simple [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variables variables names in a dataset to a of target codebook. The first and often most tedious step in developping a common data model. 
+
+### General work flow:
+
+#### Step 1: Upload Target Codebook
+
+This platform is built to harmonise incoming datasets to a single set of target_variables (codebook). An example codebook is included by default. A new codebook can be uploaded under the `Upload Codebook` tab. New codebooks should be in `.csv` format and contain two columns `variable_name` and `description`. It is recommended (but not need for this tool) that these variables be linked to standardised ontologies. 
+
+#### Step 2: Upload Incoming Datasets
+
+From here incoming study data whichs need to be mapped to the target codebook can be uploaded. The following documents can be uploaded: 
+
+ - Study Name (required)
+ - Study Description (optional)
+ - Variables Table (required)
+    - File Format: .csv
+    - File Contains: variable names or descriptions from the incoming dataset
+    - 2 columns with headers: variable_name, description
+  - Example_data (optional)
+    - File Format: .csv
+    - column headers should correspond to variable name in the dataset variables table.
+  - Contextual Documents (optional)
+    - File Format: .pdf
+    - If the uploaded variables table contains missing variable descriptions a large language model will be used to populate the descriptions. Uploading a study protocol or some other relevant documentation can help inhance this process. 
+
+#### Step 3: Initialise Tool
+
+Once studies have been uploaded you can run the variable description completion and ontology recomendation engines. You will be prompted to upload an OpenAI API key and given the option to fine tune the LLM propt used by the description completion engine.
+
+#### Step 3: Map Datasets to Codebook
+
+Once step 1 & 2 have been completed a recommendations algorithm will suggest the most likely variable mappings for each added dataset. The user will be presented with an interface to select the correct mappings from a list of suggested mappings. Thus the actual mapping process remains manual. 
+
+#### Step 4: Download Mapping Results
+
+Once the mapping process has been completed. Each study that has been fully mapped will be available for download as a .csv file. The mapping result is simply a table mapping each dataset variable name to a corresponding codebook variable name. 
+
+
+
 
 
 This work is licensed under a
