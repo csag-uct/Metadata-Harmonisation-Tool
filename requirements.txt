@@ -1,9 +1,2 @@
-jupyterlab
-numpy
-pandas
-fsspec
-duckdb
-openai
-openpyxl
-streamlit
-scipy
+# after correctly installing the dependancies listed in enviroment.yml
+clevercsv
