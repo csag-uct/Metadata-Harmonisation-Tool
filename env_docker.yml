@@ -1,0 +1,20 @@
+name: base
+channels:
+- conda-forge
+dependencies:
+- fsspec
+- jupyterlab
+- langchain
+- numpy
+- openai
+- openpyxl
+- pandas
+- pdfminer.six
+- python-dotenv
+- python-duckdb
+- scipy
+- streamlit
+- pip
+- pip:
+    - clevercsv
+    - tiktoken
