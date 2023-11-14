@@ -6,7 +6,7 @@ This is a simple [streamlit](https://streamlit.io) application we have construct
 
 #### :blue[Step 1: Upload Target Codebook]
 
-This platform is built to harmonise incoming datasets to a single set of target_variables (codebook). An example codebook is included by default. A new codebook can be uploaded under the `Upload Codebook` tab. New codebooks should be in `.csv` format and contain two columns `variable_name` and `description`. It is recommended (but not need for this tool) that these variables be linked to standardised ontologies. 
+This platform is built to harmonise incoming datasets to a single set of target_variables (codebook). An example codebook is included by default. A new codebook can be uploaded under the `Upload Codebook` tab. New codebooks should be in `.csv` format and contain two columns `variable_name` and `description`. It is recommended (but not needed for this tool) that these variables be linked to standardised ontologies. 
 
 #### :blue[Step 2: Upload Incoming Datasets]
 
