@@ -81,6 +81,7 @@ def map_study(study, variables_status, show_about, original_order):
                                                     'confidence',
                                                     'notes',
                                                     'marked'])
+                empty_df = empty_df.astype(object)
                 empty_df['study_var'] = all_variables
                 empty_df['marked'] = 'To do'
                 empty_df.to_csv(results_file, index=False)
@@ -138,10 +139,8 @@ def map_study(study, variables_status, show_about, original_order):
                 recommended_confidence = [f" - {round((1-x)*(100))}%" for x in recommended_confidence]
                 # append confidence to var name
                 recommended_keys = [f"{x} {y}" for x, y in zip(recommended_codebook, recommended_confidence)]
-                mapped_to = []
                 mapped_variable = st.selectbox('Does this map to any of these variables?', recommended_keys)
                 multiple = st.toggle('Does this variable also map to other codebook variables?')
-                print(multiple)
                 if multiple:
                     mapped_variable_2 = st.selectbox('Which other variables?', recommended_keys)
                     multiple_2 = st.toggle('Any more? (maximum of 3)')
