@@ -15,7 +15,7 @@ mapping_options = ['To do',
         'Marked to reconsider',
         'Marked unmappable']
 
-def write_to_results(variable_to_map, mapped_variable, notes, avail_idx, results_file):
+def split_mapped(mapped_variable):
     mapped_variable = mapped_variable.split(' - ')
     if len(mapped_variable) > 1:
         codebook_var = mapped_variable[0]
@@ -23,24 +23,24 @@ def write_to_results(variable_to_map, mapped_variable, notes, avail_idx, results
     else:
         codebook_var = mapped_variable[0]
         confidence = None
+    return codebook_var, confidence
+
+def write_to_results(variable_to_map, mapped_variable_list, notes, avail_idx, results_file):
+    codebook_var_list = [split_mapped(x)[0] for x in mapped_variable_list]
+    confidence_list = [split_mapped(x)[1] for x in mapped_variable_list]
     mark_options = ['To do',
                     'Successfully mapped',
                     'Marked to reconsider',
                     'Marked unmappable']
     marked = mark_options[avail_idx]
-    df_new = pd.DataFrame({
-        'study_var': variable_to_map,
-        'codebook_var': codebook_var,
-        'confidence': confidence,
-        'notes': notes,
-        'marked': marked},
-        index = [0])
+    df = pd.read_csv(results_file).set_index('study_var')
+    df.at[variable_to_map, 'codebook_var'] = codebook_var_list
+    df.at[variable_to_map, 'confidence'] = confidence_list
+    df.at[variable_to_map, 'notes'] = notes
+    df.at[variable_to_map, 'marked'] = marked
     st.write('The following has been saved:')
-    st.write(df_new)
-    df_old = pd.read_csv(results_file)
-    df_updated = pd.concat([df_old, df_new], ignore_index=True)
-    df_updated = df_updated.drop_duplicates(subset=['study_var'], keep='last')
-    df_updated.to_csv(results_file, index=False)
+    st.write(df.loc[variable_to_map].to_dict())
+    df.to_csv(results_file)
 
 def map_study(study, variables_status, show_about, original_order):
     if study == None:
@@ -138,8 +138,15 @@ def map_study(study, variables_status, show_about, original_order):
                 recommended_confidence = [f" - {round((1-x)*(100))}%" for x in recommended_confidence]
                 # append confidence to var name
                 recommended_keys = [f"{x} {y}" for x, y in zip(recommended_codebook, recommended_confidence)]
-
+                mapped_to = []
                 mapped_variable = st.selectbox('Does this map to any of these variables?', recommended_keys)
+                multiple = st.toggle('Does this variable also map to other codebook variables?')
+                print(multiple)
+                if multiple:
+                    mapped_variable_2 = st.selectbox('Which other variables?', recommended_keys)
+                    multiple_2 = st.toggle('Any more? (maximum of 3)')
+                    if multiple_2:
+                        mapped_variable_3 = st.selectbox('Which variable?', recommended_keys)
                 avail_idx = st.radio("Can this variable be mapped to our codebook?", 
                                         range(len(mapping_options)),
                                         index = 1,
@@ -147,8 +154,14 @@ def map_study(study, variables_status, show_about, original_order):
                 notes = st.text_input('Notes about this variable:', '')
                 submitted = st.button(":green[Submit]", key = 'submit')
                 if submitted:
+                    if multiple == False:
+                        mapped_variable = [mapped_variable]
+                    elif multiple_2 == True:
+                        mapped_variable = [mapped_variable, mapped_variable_2, mapped_variable_3]
+                    else:
+                        mapped_variable = [mapped_variable, mapped_variable_2]
                     _ = write_to_results(variable_to_map, mapped_variable, notes, avail_idx, results_file)
-                    time.sleep(0.25)
+                    time.sleep(0.75)
                     # I need to use session states, the above is a hack to fix death looping 
                     # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
                     del st.session_state['submit'] 
