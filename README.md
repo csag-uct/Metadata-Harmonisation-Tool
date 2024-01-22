@@ -1,6 +1,8 @@
 # Metadata Harmonisation Tool
 
-This is a [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variables variables names in a dataset to that of a target codebook. The first and often most tedious step in developping a common data model. 
+This is a [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variables variables names in a dataset to that of a target codebook. The first and often most tedious step in developing a common data model. 
+
+![GUI screenshot](GUI.png)
 
 #### A video demonstration is avaliable [here](https://drive.google.com/file/d/1fLhKLtDvA_02pvjJYkFjXyDobZA4Y6V8/view?usp=sharing)
 
@@ -8,17 +10,29 @@ This is a [streamlit](https://streamlit.io) application we have constructed that
 
 The Metadata Harmonisation Interface provides a convenient portal to match variables from an incoming dataset to a target set of ontologies. In this way the tool provides a similar role to that of the [White Rabbit tool](https://github.com/OHDSI/WhiteRabbit) utilised by the OHDSI community. This tool differentiates itself by using Large Language Models to generate variable descriptions where none have been provided and by recommending the most likely target variable to map to. A confidence indication is provided alongside mapping recommendations. This dramatically speeds up the mapping process.
 
-## How it works:
-The Metadata Harmonisation Interface compromises of two key parts:
+## How to use it: 
 
-First the LLM-based description generator provides a way to quickly and easily extract variable description information from complex free text documents such as study protocols or journal articles. While in an ideal world descriptions should come from a codebook and should match to standardised ontologies, in our experience this is often not the case. The description generator works by taking in a PDF document and converting it to plain text using the pdfminer python package. Next, we use a text-splitter from the Llangchain suite of python functions.  This works by recursively  splitting the text by the special characters: "\n\n", "\n", " ” and "” until a text length of 1000 characters is reached. An overlap of 20 character between chunks is preserved to ensure no information is lost between chunks. A text embedding model is then used to get a vector representation of each chunk. This information is stored as a simple Numpy array.  Next a prompt is constructed by taking an already completed variable and description pair and retrieving the most relevant context, calculated as the spatial distance between the chunk embeddings and the variable name embedding. A hard coded variable and description pair alongside the least relevant context is also included with a (?) appended to the description. This is an attempt to get the LLM to return some indication of whether the context has been useful. If no context is provided by the user a similar prompt pattern is followed without providing the LLM with context. 
+### Docker (recommended)
 
-The next step in the process is the ontology recommendation engine. This again uses text embeddings to retrieve vector representations of variable names and descriptions for both the target codebook and incoming datasets. Recommendations are then calculated using the spatial distance between vectors weighted 80/20 to descriptions. The interface utilises DuckDB to retrieve these recommendations from plain csv files. 
+The easiest way to use the application on your local computer is by using this [docker image](https://hub.docker.com/r/peterm790/metadata_harmonisation_tool).
 
+You will need to have [installed docker](https://www.docker.com/get-started/) on your machine.
 
-## General work flow:
+If you are using the docker desktop client you can simply search for `peterm790/metadata_harmonisation_tool` in the top search bar and select run image. Be sure to add `8501` as the host port in the `Optional Settings` drop down menu. Once running the app will be accessible from your browser at [localhost:8501/](localhost:8501/)
 
-### Initialise:
+If you prefer to use the terminal you can run the following once the docker daemon is running. 
+
+```
+docker pull peterm790/metadata_harmonisation_tool
+
+docker run -p 8501:8501 peterm790/metadata_harmonisation_tool
+```
+
+The app will then be accessible from your browser at [localhost:8501/](localhost:8501/)
+
+### Configure python environment
+
+Alternatively if you are familiar with configuring python environments a suitable environment can be configured using conda. 
 
 If you do not have a preferred python package manager already installed I recommend installing [Micromamba](https://mamba.readthedocs.io/en/latest/micromamba-installation.html#)
 
@@ -26,7 +40,6 @@ If you do not have a preferred python package manager already installed I recomm
 git clone git@github.com:csag-uct/Health_Data_Harmonisation_Platform.git
 
 cd Health_Data_Harmonisation_Platform
-
 
 conda env create -f environment.yml -c conda-forge
 conda activate harmonisation_env
@@ -37,15 +50,11 @@ cd app/
 
 streamlit run mapping_interface.py
 ```
+The app will then be accessible from your browser at [localhost:8501/](localhost:8501/) 
 
-This should automatically open your browser to this page:
+Please note the application requires a Unix like filesystem and so windows users will need to use WSL. 
 
-![GUI screenshot](GUI.png)
-
-
-User Interface Instructions copied below:
-
-### General work flow:
+## General work flow:
 
 #### Step 1: Upload Target Codebook
 
@@ -81,7 +90,12 @@ Once step 1 & 2 have been completed a recommendations algorithm will suggest the
 Once the mapping process has been completed. Each study that has been fully mapped will be available for download as a .csv file. The mapping result is simply a table mapping each dataset variable name to a corresponding codebook variable name. 
 
 
+## How it works:
+The Metadata Harmonisation Interface compromises of two key parts:
 
+First the LLM-based description generator provides a way to quickly and easily extract variable description information from complex free text documents such as study protocols or journal articles. While in an ideal world descriptions should come from a codebook and should match to standardised ontologies, in our experience this is often not the case. The description generator works by taking in a PDF document and converting it to plain text using the pdfminer python package. Next, we use a text-splitter from the Llangchain suite of python functions.  This works by recursively  splitting the text by the special characters: "\n\n", "\n", " ” and "” until a text length of 1000 characters is reached. An overlap of 20 character between chunks is preserved to ensure no information is lost between chunks. A text embedding model is then used to get a vector representation of each chunk. This information is stored as a simple Numpy array.  Next a prompt is constructed by taking an already completed variable and description pair and retrieving the most relevant context, calculated as the spatial distance between the chunk embeddings and the variable name embedding. A hard coded variable and description pair alongside the least relevant context is also included with a (?) appended to the description. This is an attempt to get the LLM to return some indication of whether the context has been useful. If no context is provided by the user a similar prompt pattern is followed without providing the LLM with context. 
+
+The next step in the process is the ontology recommendation engine. This again uses text embeddings to retrieve vector representations of variable names and descriptions for both the target codebook and incoming datasets. Recommendations are then calculated using the spatial distance between vectors weighted 80/20 to descriptions. The interface utilises DuckDB to retrieve these recommendations from plain csv files. 
 
 
 This work is licensed under a
