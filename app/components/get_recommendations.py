@@ -1,7 +1,12 @@
 import pandas as pd
 import fsspec
 import openai
-from openai.embeddings_utils import get_embedding
+
+
+def get_embedding(str, engine="text-similarity-davinci-001", **kwargs):
+    text = text.replace("\n", " ")
+    return openai.Embedding.create(input=[text], engine=engine, **kwargs)["data"][0]["embedding"]
+
 from scipy import spatial
 
 from dotenv import dotenv_values
