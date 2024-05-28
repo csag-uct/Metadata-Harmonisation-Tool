@@ -4,6 +4,10 @@ import openai
 from openai.embeddings_utils import get_embedding
 from scipy import spatial
 
+def get_embedding(str, engine="text-similarity-davinci-001", **kwargs):
+    text = text.replace("\n", " ")
+    return openai.Embedding.create(input=[text], engine=engine, **kwargs)["data"][0]["embedding"]
+
 from dotenv import dotenv_values
 
 results_path = "results"
