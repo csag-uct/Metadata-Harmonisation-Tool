@@ -2,14 +2,15 @@ import pandas as pd
 import math
 import fsspec
 import time
-import openai
 from pdfminer.high_level import extract_text
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
 from scipy import spatial
-
 from dotenv import dotenv_values
 
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
 
 results_path = "results"
 input_path = "input"
@@ -80,7 +81,7 @@ def convert_pdf_to_txt():
 def generate_descriptions_without_context():
     config = dotenv_values(".env")
     OpenAI_api_key = config['OpenAI_api_key']
-    openai.api_key = OpenAI_api_key
+    client = OpenAI(api_key = OpenAI_api_key)
     init_prompt = config['init_prompt']
     avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
     avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.'] # strip path and remove hidden folders
@@ -113,12 +114,12 @@ def generate_descriptions_without_context():
                 openai_response = None
                 prompts = return_prompt_no_context(init_prompt, var)
                 try:
-                    openai_response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=prompts)
+                    openai_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompts)
                 except:
                     time.sleep(1)
                     print('retry')
                     try:
-                        openai_response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=prompts)
+                        openai_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompts)
                     except:
                         openai_response = None
                         print('fail') # if all fail good chance the context length is too long
@@ -136,7 +137,7 @@ def generate_descriptions_without_context():
 def generate_descriptions_with_context():
     config = dotenv_values(".env")
     OpenAI_api_key = config['OpenAI_api_key']
-    openai.api_key = OpenAI_api_key
+    client = OpenAI(api_key = OpenAI_api_key)
     init_prompt = config['init_prompt']
     print(init_prompt)
     avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
@@ -207,12 +208,12 @@ def generate_descriptions_with_context():
                     prompts = return_prompt(init_prompt, var, context, bad_context, good_context)
                 # the openai api is a bit unstable this just has two retries 
                 try:
-                    openai_response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=prompts)
+                    openai_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompts)
                 except:
                     time.sleep(1)
                     print('retry')
                     try:
-                        openai_response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=prompts)
+                        openai_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompts)
                     except:
                         openai_response = None
                         print('fail') # if all fail good chance the context length is too long
@@ -231,4 +232,6 @@ def generate_descriptions_with_context():
 
 
 
-        
+    
+#if __name__ == '__main__':
+#    generate_descriptions_without_context()

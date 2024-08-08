@@ -1,12 +1,16 @@
 import pandas as pd
 import fsspec
-import openai
-from openai.embeddings_utils import get_embedding
 from scipy import spatial
 
-def get_embedding(str, engine="text-similarity-davinci-001", **kwargs):
-    text = text.replace("\n", " ")
-    return openai.Embedding.create(input=[text], engine=engine, **kwargs)["data"][0]["embedding"]
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
+
+
+def get_embedding(text, client, model="text-embedding-ada-002"):
+   text = str(text).replace("\n", " ")
+   return client.embeddings.create(input = [text], model=model).data[0].embedding
+
 
 from dotenv import dotenv_values
 
@@ -19,23 +23,23 @@ fs = fsspec.filesystem("")
 def embed_codebook():
     config = dotenv_values(".env")
     OpenAI_api_key = config['OpenAI_api_key']
-    openai.api_key = OpenAI_api_key
+    client = OpenAI(api_key = OpenAI_api_key)
     embedding_model = "text-embedding-ada-002"
     if not fs.exists(f'{input_path}/target_variables_with_embeddings.csv'):
         df = pd.read_csv(f"{input_path}/target_variables.csv")
         df = df[['variable_name','description']]
-        df["var_embeddings"] = df['variable_name'].apply(lambda x: get_embedding(x, engine=embedding_model))
-        df["description_embeddings"] = df['description'].apply(lambda x: get_embedding(x, engine=embedding_model))
+        df["var_embeddings"] = df['variable_name'].apply(lambda x: get_embedding(x, client, model=embedding_model))
+        df["description_embeddings"] = df['description'].apply(lambda x: get_embedding(x, client, model=embedding_model))
         df.to_csv(f'{input_path}/target_variables_with_embeddings.csv', index=False)
 
 def embed_study(study):
     config = dotenv_values(".env")
     OpenAI_api_key = config['OpenAI_api_key']
-    openai.api_key = OpenAI_api_key
+    client = OpenAI(api_key = OpenAI_api_key)
     embedding_model = "text-embedding-ada-002"
     df = pd.read_csv(f'{input_path}/{study}/dataset_variables_auto_completed.csv')[['variable_name','description']]
-    df["var_embeddings"] = df['variable_name'].apply(lambda x: get_embedding(x, engine=embedding_model))
-    df["description_embeddings"] = df['description'].apply(lambda x: get_embedding(x, engine=embedding_model))
+    df["var_embeddings"] = df['variable_name'].apply(lambda x: get_embedding(x, client, model=embedding_model))
+    df["description_embeddings"] = df['description'].apply(lambda x: get_embedding(x, client, model=embedding_model))
     df.to_csv(f'{input_path}/{study}/dataset_variables_with_embeddings.csv', index=False)
 
 def calculate_cosine_similarity(embedding1, embedding2):
@@ -43,9 +47,6 @@ def calculate_cosine_similarity(embedding1, embedding2):
     return similarity
     
 def generate_recommendations(study):
-    config = dotenv_values(".env")
-    OpenAI_api_key = config['OpenAI_api_key']
-    openai.api_key = OpenAI_api_key
     study_df = pd.read_csv(f'{input_path}/{study}/dataset_variables_with_embeddings.csv')
     target_df = pd.read_csv(f'{input_path}/target_variables_with_embeddings.csv')
     recommendations = []
