@@ -6,11 +6,9 @@ from pdfminer.high_level import extract_text
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import OpenAIEmbeddings
 from scipy import spatial
-from dotenv import dotenv_values
 
-from openai import OpenAI
-from dotenv import load_dotenv
-import os
+from dotenv import dotenv_values
+from openai import OpenAI # type: ignore
 
 results_path = "results"
 input_path = "input"
@@ -31,20 +29,21 @@ def get_index(list_in, by):
     elif by == 'max':
         return [index for index, _ in sorted_values[-3:]]
 
-def return_prompt_with_example(init_prompt, variable, context, example, example_context, example_description, bad_context):
-    prompts = [{"role": "system", "content": f"""{init_prompt} Some context is provided alongside to help."""},
-                {"role": "user", "content": f"variable name:  {example}, context: {example_context}"},
-                {"role": "assistant", "content": f"{example_description}"},
-                {"role": "user", "content": f"variable name:  matdiag, context: {bad_context}"}, # giving it the least relevent context
-                {"role": "assistant", "content": "maternal diagnosis (?)"}, # add (?) to give some context of model confidence
-                {"role": "user", "content": f"variable name:  {variable}, context: {context}"}
-                ]
+def return_prompt_with_example(init_prompt, variable, context, example_dict, bad_context):
+    prompts = [{"role": "system", "content": f"""{init_prompt} Some context is provided alongside to help."""}]
+    for example in example_dict:
+        example_context = example_dict[example][0]
+        example_description = example_dict[example][1]
+        prompts.append({"role": "user", "content": f"variable name:  {example}, context: {example_context}"})
+        prompts.append({"role": "assistant", "content": f"{example_description}"})
+    prompts.append({"role": "user", "content": f"variable name:  matdiag, context: {bad_context}"}) # giving it the least relevent context
+    prompts.append({"role": "assistant", "content": "maternal diagnosis (?)"}) # add (?) to give some context of model confidence
+    prompts.append({"role": "user", "content": f"variable name:  {variable}, context: {context}"})
     return prompts
-
 
 def return_prompt(init_prompt, variable, context, bad_context, good_context):
     prompts = [{"role": "system", 
-                "content": f"""{init_prompt} Some context is provided alongside to help."""},
+                "content": f"""{init_prompt}"""},
                 {"role": "user", "content": f"variable name:  Patient ID, context: {good_context}"}, # giving it the least relevent context
                 {"role": "assistant", "content": "Patient Identifier"},
                 {"role": "user", "content": f"variable name:  matdiag, context: {bad_context}"}, # giving it the least relevent context
@@ -77,7 +76,6 @@ def convert_pdf_to_txt():
                 of.write(text)
 
 # the below two functions should be merged too lazy for the minute
-
 def generate_descriptions_without_context():
     config = dotenv_values(".env")
     OpenAI_api_key = config['OpenAI_api_key']
@@ -133,7 +131,6 @@ def generate_descriptions_without_context():
 
             variables_df.to_csv(f'{input_path}/{study}/dataset_variables_auto_completed.csv', index = False)
 
-
 def generate_descriptions_with_context():
     config = dotenv_values(".env")
     OpenAI_api_key = config['OpenAI_api_key']
@@ -160,7 +157,7 @@ def generate_descriptions_with_context():
             else:
                 described.append(variables_df.iloc[i]['variable_name'])
         
-        if not len(to_do) > 0:
+        if len(to_do) == 0:
             variables_df.to_csv(f'{input_path}/{study}/dataset_variables_auto_completed.csv') # no need to autocomplete
         else:
             #  read plain text
@@ -186,9 +183,16 @@ def generate_descriptions_with_context():
                 return '\n'.join([x.page_content for x in example_context])
             
             if len(described) > 0:
-                example = described[0]
-                example_description = variables_df.loc[variables_df['variable_name'] == example]['description'].values[0]
-                example_context = get_relevent_context(example, relevance_dist = 'min')
+                # create a maximum of 5 examples (Thanks Pierre Kloppers!)
+                example_dict = {}
+                example_limitor = len(described)
+                if len(described)>5:
+                    example_limitor = 5
+                for num in range(0,example_limitor):
+                    example = described[num]
+                    example_description = variables_df.loc[variables_df['var'] == example]['description'].values[0]
+                    example_context = get_relevent_context(example)
+                    example_dict[example] = [example_description, example_context]
             else:
                 example = None
                 example_description = None
@@ -203,7 +207,7 @@ def generate_descriptions_with_context():
                 openai_response = None
                 context = get_relevent_context(var, relevance_dist = 'min')
                 if example:
-                    prompts = return_prompt_with_example(init_prompt, var, context, example, example_context, example_description, bad_context)
+                    prompts = return_prompt_with_example(init_prompt, var, context, example_dict, bad_context)
                 else:
                     prompts = return_prompt(init_prompt, var, context, bad_context, good_context)
                 # the openai api is a bit unstable this just has two retries 
@@ -226,12 +230,6 @@ def generate_descriptions_with_context():
                 variables_df.loc[variables_df['variable_name'] == var,'description'] = codebook[var]
 
             variables_df.to_csv(f'{input_path}/{study}/dataset_variables_auto_completed.csv', index = False)
-
-
-
-
-
-
     
 #if __name__ == '__main__':
 #    generate_descriptions_without_context()

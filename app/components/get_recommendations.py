@@ -2,7 +2,7 @@ import pandas as pd
 import fsspec
 from scipy import spatial
 
-from openai import OpenAI
+from openai import OpenAI # type: ignore
 from dotenv import load_dotenv
 import os
 
