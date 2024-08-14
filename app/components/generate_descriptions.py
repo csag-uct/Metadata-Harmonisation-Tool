@@ -29,38 +29,19 @@ def get_index(list_in, by):
     elif by == 'max':
         return [index for index, _ in sorted_values[-3:]]
 
-def return_prompt_with_example(init_prompt, variable, context, example_dict, bad_context):
-    prompts = [{"role": "system", "content": f"""{init_prompt} Some context is provided alongside to help."""}]
-    for example in example_dict:
-        example_context = example_dict[example][0]
-        example_description = example_dict[example][1]
-        prompts.append({"role": "user", "content": f"variable name:  {example}, context: {example_context}"})
-        prompts.append({"role": "assistant", "content": f"{example_description}"})
-    prompts.append({"role": "user", "content": f"variable name:  matdiag, context: {bad_context}"}) # giving it the least relevent context
-    prompts.append({"role": "assistant", "content": "maternal diagnosis (?)"}) # add (?) to give some context of model confidence
+def return_prompt(init_prompt, variable, context = 'Not available', example_dict = None):
+    prompts = [{"role": "system", "content": f"""{init_prompt}"""},
+                {"role": "user", "content": f"variable name:  Patient ID, context: 'Not available'"}, 
+                {"role": "assistant", "content": "Patient Identifier (?)"},
+                {"role": "user", "content": f"variable name:  matdiag, context: 'Not available'"}, 
+                {"role": "assistant", "content": "maternal diagnosis (?)"}]
+    if example_dict:
+        for example in example_dict:
+            example_context = example_dict[example][0]
+            example_description = example_dict[example][1]
+            prompts.append({"role": "user", "content": f"variable name:  {example}, context: {example_context}"})
+            prompts.append({"role": "assistant", "content": f"{example_description}"})
     prompts.append({"role": "user", "content": f"variable name:  {variable}, context: {context}"})
-    return prompts
-
-def return_prompt(init_prompt, variable, context, bad_context, good_context):
-    prompts = [{"role": "system", 
-                "content": f"""{init_prompt}"""},
-                {"role": "user", "content": f"variable name:  Patient ID, context: {good_context}"}, # giving it the least relevent context
-                {"role": "assistant", "content": "Patient Identifier"},
-                {"role": "user", "content": f"variable name:  matdiag, context: {bad_context}"}, # giving it the least relevent context
-                {"role": "assistant", "content": "maternal diagnosis (?)"},
-                {"role": "user", "content": f"variable name:  {variable}, context: {context}"}
-                ]
-    return prompts
-
-def return_prompt_no_context(init_prompt, variable):
-    prompts = [{"role": "system", 
-                "content": f"""{init_prompt}"""},
-                {"role": "user", "content": f"variable name:  Patient ID"}, # giving it the least relevent context
-                {"role": "assistant", "content": "Patient Identifier"},
-                {"role": "user", "content": f"variable name:  matdiag"}, # giving it the least relevent context
-                {"role": "assistant", "content": "maternal diagnosis"},
-                {"role": "user", "content": f"variable name:  {variable}"}
-                ]
     return prompts
 
 def convert_pdf_to_txt():
@@ -75,79 +56,81 @@ def convert_pdf_to_txt():
             with fs.open(output_file, 'w') as of:
                 of.write(text)
 
-# the below two functions should be merged too lazy for the minute
-def generate_descriptions_without_context():
+def embed_documents(input_path, study):
     config = dotenv_values(".env")
-    OpenAI_api_key = config['OpenAI_api_key']
-    client = OpenAI(api_key = OpenAI_api_key)
-    init_prompt = config['init_prompt']
-    avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
-    avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.'] # strip path and remove hidden folders
-    print(avail_studies)
-    # skip already done
-    done = [x for x in avail_studies if fs.exists(f'{input_path}/{x}/dataset_variables_auto_completed.csv')]
-    avail_studies = [x for x in avail_studies if x not in done]
-    # only do if no context
-    studies_without_context = [study for study in avail_studies if not fs.exists(f"{input_path}/{study}/context.txt")]
-    print(studies_without_context)
-    for study in studies_without_context:
-        print(study)
-        variables_df = pd.read_csv(f'{input_path}/{study}/dataset_variables.csv')
+    embeddings_model = OpenAIEmbeddings(openai_api_key=config['OpenAI_api_key'])
+    with fs.open(f"{input_path}/{study}/context.txt", 'r', encoding='utf-8') as file:
+        doc_text = file.read()
+    text_splitter = RecursiveCharacterTextSplitter(
+        #separators = ["\n\n", "\n"," ", ""],
+        chunk_size = 1000,
+        chunk_overlap  = 20,
+        length_function = len,
+        is_separator_regex = True,
+    )
+    text_chunks = text_splitter.create_documents([doc_text])
+    embeddings = embeddings_model.embed_documents([x.page_content for x in text_chunks])
+    return text_chunks, embeddings
 
-        to_do = []
-        described = []
-        for i in range(len(variables_df)):
-            if not type(variables_df.iloc[i]['description']) == str:
-                if math.isnan(variables_df.iloc[i]['description']):
-                    to_do.append(variables_df.iloc[i]['variable_name'])
-            else:
-                described.append(variables_df.iloc[i]['variable_name'])
-        
-        if not len(to_do) > 0:
-            variables_df.to_csv(f'{input_path}/{study}/dataset_variables_auto_completed.csv') # no need to autocomplete
+# defining function here just reduces complexity of below func not great practice I know - sorry!
+def get_relevent_context(varname, text_chunks, embeddings, relevance_dist = 'min'):
+    config = dotenv_values(".env")
+    embeddings_model = OpenAIEmbeddings(openai_api_key=config['OpenAI_api_key'])
+    embedded_query = embeddings_model.embed_query(f"variable name:  {varname}, label or description: ")
+    dists = [calculate_cosine_similarity(embedded_query,x) for x in embeddings]
+    idx = get_index(dists, by = relevance_dist)
+    example_context = [text_chunks[i] for i in idx] # type: ignore
+    return '\n'.join([x.page_content for x in example_context])
+
+def get_example_dict(described, variables_df, text_chunks = None, embeddings = None):
+    # create a maximum of 5 examples (Thanks Pierre Kloppers!)
+    example_dict = {}
+    example_limitor = len(described)
+    if len(described)>5:
+        example_limitor = 5
+    for num in range(0,example_limitor):
+        example = described[num]
+        example_description = variables_df.loc[variables_df['var'] == example]['description'].values[0]
+        if embeddings is not None and text_chunks is not None:
+            example_context = get_relevent_context(example, text_chunks, embeddings)
         else:
-            # Call openai API
-            codebook = {}
-            for var in to_do:
-                openai_response = None
-                prompts = return_prompt_no_context(init_prompt, var)
-                try:
-                    openai_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompts)
-                except:
-                    time.sleep(1)
-                    print('retry')
-                    try:
-                        openai_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompts)
-                    except:
-                        openai_response = None
-                        print('fail') # if all fail good chance the context length is too long
-                if openai_response:
-                    label = openai_response.choices[0].message.content # type: ignore
-                    codebook[var] = ''.join(['*',label]) #add a * to indicate this description is AI generated
-                time.sleep(0.1)
+            example_context = 'Not available'
+        example_dict[example] = [example_description, example_context]
+    return example_dict
 
-            for var in list(codebook):
-                variables_df.loc[variables_df['variable_name'] == var,'description'] = codebook[var]
-
-            variables_df.to_csv(f'{input_path}/{study}/dataset_variables_auto_completed.csv', index = False)
-
-def generate_descriptions_with_context():
+def get_llm_response(client, prompt):
     config = dotenv_values(".env")
-    OpenAI_api_key = config['OpenAI_api_key']
-    client = OpenAI(api_key = OpenAI_api_key)
+    client = OpenAI(api_key = config['OpenAI_api_key'])
+    llm_response = None
+    try:
+        llm_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompt)
+    except:
+        time.sleep(1)
+        print('retry')
+        try:
+            llm_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompt)
+        except:
+            llm_response = None
+            print('openai fail') # if all fail good chance the context length is too long
+    if llm_response:
+        label = llm_response.choices[0].message.content # type: ignore
+        return ''.join(['*',label]) # add a * to indicate this description is AI generated
+    else: 
+        return None
+
+def generate_descriptions():
+    config = dotenv_values(".env")
+    client = OpenAI(api_key = config['OpenAI_api_key'])
     init_prompt = config['init_prompt']
     print(init_prompt)
     avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
     avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.'] # strip path and remove hidden folders
-    # skip already done
-    done = [x for x in avail_studies if fs.exists(f'{input_path}/{x}/dataset_variables_auto_completed.csv')]
+    done = [x for x in avail_studies if fs.exists(f'{input_path}/{x}/dataset_variables_auto_completed.csv')] # skip already done
     avail_studies = [x for x in avail_studies if x not in done]
-    # only do if context
-    studies_with_context = [study for study in avail_studies if fs.exists(f"{input_path}/{study}/context.txt")]
-    print(studies_with_context)
-    for study in studies_with_context:
+    for study in avail_studies:
         print(study)
         variables_df = pd.read_csv(f'{input_path}/{study}/dataset_variables.csv')
+        # get variables to describe
         to_do = []
         described = []
         for i in range(len(variables_df)):
@@ -156,80 +139,44 @@ def generate_descriptions_with_context():
                     to_do.append(variables_df.iloc[i]['variable_name'])
             else:
                 described.append(variables_df.iloc[i]['variable_name'])
-        
-        if len(to_do) == 0:
-            variables_df.to_csv(f'{input_path}/{study}/dataset_variables_auto_completed.csv') # no need to autocomplete
-        else:
-            #  read plain text
-            with fs.open(f"{input_path}/{study}/context.txt", 'r', encoding='utf-8') as file:
-                doc_text = file.read()
-            text_splitter = RecursiveCharacterTextSplitter(
-                #separators = ["\n\n", "\n"," ", ""],
-                chunk_size = 1000,
-                chunk_overlap  = 20,
-                length_function = len,
-                is_separator_regex = True,
-            )
-            text_chunks = text_splitter.create_documents([doc_text])
-            embeddings_model = OpenAIEmbeddings(openai_api_key=OpenAI_api_key)
-            embeddings = embeddings_model.embed_documents([x.page_content for x in text_chunks])
-            
-            # defining function here just reduces complexity of below func not great practice I know - sorry!
-            def get_relevent_context(varname, relevance_dist = 'min'):
-                embedded_query = embeddings_model.embed_query(f"variable name:  {varname}, label or description: ")
-                dists = [calculate_cosine_similarity(embedded_query,x) for x in embeddings]
-                idx = get_index(dists, by = relevance_dist)
-                example_context = [text_chunks[i] for i in idx] # type: ignore
-                return '\n'.join([x.page_content for x in example_context])
-            
-            if len(described) > 0:
-                # create a maximum of 5 examples (Thanks Pierre Kloppers!)
-                example_dict = {}
-                example_limitor = len(described)
-                if len(described)>5:
-                    example_limitor = 5
-                for num in range(0,example_limitor):
-                    example = described[num]
-                    example_description = variables_df.loc[variables_df['var'] == example]['description'].values[0]
-                    example_context = get_relevent_context(example)
-                    example_dict[example] = [example_description, example_context]
-            else:
-                example = None
-                example_description = None
-                example_context = None
 
-            bad_context = get_relevent_context('matdiag', relevance_dist = 'max')
-            good_context = get_relevent_context('Patient ID', relevance_dist = 'min') # an easy one
+        if len(to_do) == 0: # if all variables are described no need to do anything
+            variables_df.to_csv(f'{input_path}/{study}/dataset_variables_auto_completed.csv')
+        else:
+            # check if context is available
+            context_available = False
+            text_chunks, embeddings = None, None
+            if fs.exists(f"{input_path}/{study}/context.txt"):
+                text_chunks, embeddings = embed_documents(input_path, study) # embed docs
+                context_available = True
+
+            # check if examples are available
+            example_dict = None
+            if not len(described) == 0:
+                example_dict = get_example_dict(described, variables_df, text_chunks,embeddings)
             
-            # Call openai API
+            # create descriptions
             codebook = {}
             for var in to_do:
-                openai_response = None
-                context = get_relevent_context(var, relevance_dist = 'min')
-                if example:
-                    prompts = return_prompt_with_example(init_prompt, var, context, example_dict, bad_context)
-                else:
-                    prompts = return_prompt(init_prompt, var, context, bad_context, good_context)
-                # the openai api is a bit unstable this just has two retries 
-                try:
-                    openai_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompts)
-                except:
-                    time.sleep(1)
-                    print('retry')
-                    try:
-                        openai_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompts)
-                    except:
-                        openai_response = None
-                        print('fail') # if all fail good chance the context length is too long
-                if openai_response:
-                    label = openai_response.choices[0].message.content # type: ignore
-                    codebook[var] = ''.join(['*',label]) #add a * to indicate this description is AI generated
-                time.sleep(0.1)
+                # get context for variable if available
+                context = 'Not available'
+                if context_available:
+                    context = get_relevent_context(var, text_chunks, embeddings)
 
+                # create prompt
+                prompt = return_prompt(init_prompt, var, context, example_dict)
+
+                # get LLM response
+                llm_response = get_llm_response(client, prompt)
+                if llm_response:
+                    codebook[var] = llm_response
+            
+            # update variables_df
             for var in list(codebook):
                 variables_df.loc[variables_df['variable_name'] == var,'description'] = codebook[var]
-
+            
+            # write to file
             variables_df.to_csv(f'{input_path}/{study}/dataset_variables_auto_completed.csv', index = False)
-    
-#if __name__ == '__main__':
-#    generate_descriptions_without_context()
+
+if __name__ == '__main__':
+    generate_descriptions()

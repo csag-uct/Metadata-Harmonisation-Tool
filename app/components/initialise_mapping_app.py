@@ -3,8 +3,8 @@ import fsspec
 
 import time
 
-from .get_recommendations import get_embeddings, get_recommendations, embed_codebook
-from .generate_descriptions import generate_descriptions_with_context, generate_descriptions_without_context, convert_pdf_to_txt
+from .get_recommendations import get_embeddings, get_recommendations
+from .generate_descriptions import generate_descriptions, convert_pdf_to_txt
 
 from dotenv import dotenv_values
 
@@ -108,8 +108,7 @@ def initialise_mapping_recommendations():
     if run:
         with st.spinner('Phoning a friend :coffee:...'):
             convert_pdf_to_txt()
-            generate_descriptions_without_context()
-            generate_descriptions_with_context()
+            generate_descriptions()
             get_embeddings()
             get_recommendations()
             del st.session_state['run'] 
