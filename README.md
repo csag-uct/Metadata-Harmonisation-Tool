@@ -41,7 +41,7 @@ git clone git@github.com:csag-uct/Health_Data_Harmonisation_Platform.git
 
 cd Health_Data_Harmonisation_Platform
 
-conda env create -f environment.yml -c conda-forge
+conda env create -f environment.yml
 conda activate harmonisation_env
 
 pip install -r requirements.txt # some packages not available on conda channels
