@@ -1,3 +1,5 @@
+# This tool is now no longer being updated on this github repository, please see the up-to-date version of this tool from the repository that this is forked from [here](https://github.com/csag-uct/Metadata-Harmonisation-Tool)
+
 # Metadata Harmonisation Tool
 
 This is a [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variables variables names in a dataset to that of a target codebook. The first and often most tedious step in developing a common data model. 
