@@ -45,32 +45,19 @@ def modify_env(key,value=None, delete = False):
 def initialise_mapping_recommendations():
     config = dotenv_values(".env")
 
-    use_local_model = st.checkbox("Use Local Model", value='local_model' in config)
-
-    if use_local_model:
-        st.write(":green[Local model option enabled]")
-        local_model_path = st.text_input("Enter the path to your local model (.gguf file)", value=config.get('local_model', ''))
-        if st.button("Set Local Model", key='set_local_model'):
-            modify_env('local_model', local_model_path)
-            del st.session_state['set_local_model']
+    if 'OpenAI_api_key' not in config:
+        st.write(":red[No OpenAI key detected, please insert a key below]")
+        OpenAI_api_key = st.text_input("OpenAI_api_key", value="", type="password")
+        if st.button("Add Key", key='submit'):
+            modify_env('OpenAI_api_key', OpenAI_api_key)
+            del st.session_state['submit']
             st.rerun()
-        if 'local_model' in config:
-            st.write(f":green[Local model already set: {config['local_model']} :white_check_mark:]")
     else:
-        if 'OpenAI_api_key' not in config:
-            st.write(":red[No OpenAI key detected, please insert a key below]")
-            OpenAI_api_key = st.text_input("OpenAI_api_key", value="", type="password")
-            if st.button("Add Key", key='submit'):
-                modify_env('OpenAI_api_key', OpenAI_api_key)
-                del st.session_state['submit']
-                st.rerun()
-        else:
-            st.write(f":green[OpenAI_api_key detected :white_check_mark:]")
+        st.write(f":green[OpenAI_api_key detected :white_check_mark:]")
 
     reset = st.button(":red[Reset LLM Configuration]", key='reset')
     if reset:
         modify_env('OpenAI_api_key', delete=True)
-        modify_env('local_model', delete=True)
         del st.session_state['reset']
         st.rerun()
     

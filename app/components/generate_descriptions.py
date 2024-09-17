@@ -54,9 +54,19 @@ def convert_pdf_to_txt():
             with fs.open(output_file, 'w') as of:
                 of.write(text)
 
-def embed_documents(input_path, study, config):
-    # only available if OpenAI key is set
-    embeddings_model = OpenAIEmbeddings(openai_api_key=config['OpenAI_api_key'])
+def get_embedding(openai_client, text, model="text-embedding-ada-002"):
+    text = str(text).replace("\n", " ")
+    if openai_client:
+        try:
+            response = openai_client.embeddings.create(input=[text], model=model)
+            return response.data[0].embedding
+        except Exception as e:
+            print(f"Error generating OpenAI embedding: {str(e)}")
+    else:
+        raise ValueError("No OpenAI client available. Please provide an OpenAI API key.")
+    return None
+
+def embed_documents(openai_client, input_path, study):
     with fs.open(f"{input_path}/{study}/context.txt", 'r', encoding='utf-8') as file:
         doc_text = file.read()
     text_splitter = RecursiveCharacterTextSplitter(
@@ -67,7 +77,9 @@ def embed_documents(input_path, study, config):
         is_separator_regex = True,
     )
     text_chunks = text_splitter.create_documents([doc_text])
-    embeddings = embeddings_model.embed_documents([x.page_content for x in text_chunks])
+    embeddings = []
+    for chunk in text_chunks:
+        embeddings.append(get_embedding(openai_client, chunk.page_content))
     return text_chunks, embeddings
 
 def get_relevent_context(varname, text_chunks, embeddings, relevance_dist = 'min'):
@@ -95,24 +107,6 @@ def get_example_dict(described, variables_df, text_chunks = None, embeddings = N
         example_dict[example] = [example_description, example_context]
     return example_dict
 
-def get_llm_response_llama(local_model, prompt):
-    formatted_prompt = ""
-    for message in prompt:
-        if message['role'] == 'user':
-            formatted_prompt += f"Human: {message['content']}\n"
-        elif message['role'] == 'assistant':
-            formatted_prompt += f"Assistant: {message['content']}\n"
-        elif message['role'] == 'system':
-            formatted_prompt += f"System: {message['content']}\n"
-    formatted_prompt += "Assistant: "
-    try:
-        output = local_model(formatted_prompt, max_tokens=100, stop=["Human:", "\n\n"])
-        response = output['choices'][0]['text'].strip()
-        return f'*{response}'  # add a * to indicate this description is AI generated
-    except Exception as e:
-        print(f'llama fail: {str(e)}')
-        return None
-
 def get_openai_llm_response(openai_client, prompt):
     llm_response = None
     try:
@@ -131,18 +125,16 @@ def get_openai_llm_response(openai_client, prompt):
     else: 
         return None
     
-def get_llm_response(openai_client, local_model, prompt):
+def get_llm_response(openai_client, prompt):
     if openai_client:
-        print('openai')
         return get_openai_llm_response(openai_client, prompt)
     else:
-        print('llama')
-        return get_llm_response_llama(local_model, prompt)
+        raise ValueError("No OpenAI API client found. Please provide an API key to proceed.")
 
 
 def generate_descriptions():
     config = dotenv_values(".env")
-    openai_client, local_model = init_llm_models(config)
+    openai_client = init_llm_models(config)
     init_prompt = config['init_prompt']
     avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
     avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.'] # strip path and remove hidden folders
@@ -168,7 +160,7 @@ def generate_descriptions():
             context_available = False
             text_chunks, embeddings = None, None
             if fs.exists(f"{input_path}/{study}/context.txt"):
-                text_chunks, embeddings = embed_documents(input_path, study, config) # embed docs
+                text_chunks, embeddings = embed_documents(openai_client, input_path, study) 
                 context_available = True
 
             # check if examples are available
@@ -188,7 +180,7 @@ def generate_descriptions():
                 prompt = return_prompt(init_prompt, var, context, example_dict)
 
                 # get LLM response
-                llm_response = get_llm_response(openai_client, local_model, prompt)
+                llm_response = get_llm_response(openai_client, prompt)
                 if llm_response:
                     codebook[var] = llm_response
             
