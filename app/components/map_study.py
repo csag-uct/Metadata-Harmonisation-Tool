@@ -129,7 +129,6 @@ def map_study(study, variables_status, show_about, original_order):
                             example = ' ; '.join(example_data)
                             st.code(example)
 
-                # form
                 st.write('Please complete the form below:')
                 # recomendations
                 recommended_codebook = eval(to_map_df.target_recommendations.to_list()[0])
@@ -138,8 +137,9 @@ def map_study(study, variables_status, show_about, original_order):
                 recommended_confidence = [f" - {round((1-x)*(100))}%" for x in recommended_confidence]
                 # append confidence to var name
                 recommended_keys = [f"{x} {y}" for x, y in zip(recommended_codebook, recommended_confidence)]
-
+                # select variable
                 mapped_variable = st.selectbox('Does this map to any of these variables?', recommended_keys)
+                # select mapping option
                 avail_idx = st.radio("Can this variable be mapped to our codebook?", 
                                         range(len(mapping_options)),
                                         index = 1,
@@ -147,8 +147,10 @@ def map_study(study, variables_status, show_about, original_order):
                 notes = st.text_input('Notes about this variable:', '')
                 submitted = st.button(":green[Submit]", key = 'submit')
                 if submitted:
+                    # write mappings to results
                     _ = write_to_results(variable_to_map, mapped_variable, notes, avail_idx, results_file)
-                    time.sleep(0.25)
+                    # sleep a few seconds to show results being written
+                    time.sleep(0.2)
                     # I need to use session states, the above is a hack to fix death looping 
                     # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
                     del st.session_state['submit'] 

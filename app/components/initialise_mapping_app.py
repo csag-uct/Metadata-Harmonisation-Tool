@@ -1,8 +1,6 @@
 import streamlit as st
 import fsspec
 
-import time
-
 from .get_recommendations import get_embeddings, get_recommendations
 from .generate_descriptions import generate_descriptions, convert_pdf_to_txt
 
@@ -47,25 +45,34 @@ def modify_env(key,value=None, delete = False):
 def initialise_mapping_recommendations():
     config = dotenv_values(".env")
 
-    if 'OpenAI_api_key' not in list(config):
-        st.write(":red[No OpenAI key detected, please insert a key below]")
-        OpenAI_api_key = st.text_input("OpenAI_api_key", value="", type = "password")
-        submit = st.button("Add Key", key = 'submit')
-        if submit:
-            modify_env('OpenAI_api_key', OpenAI_api_key)
-            # I need to use session states the above is a hack to fix death looping 
-            # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
-            del st.session_state['submit'] 
+    use_local_model = st.checkbox("Use Local Model", value='local_model' in config)
+
+    if use_local_model:
+        st.write(":green[Local model option enabled]")
+        local_model_path = st.text_input("Enter the path to your local model (.gguf file)", value=config.get('local_model', ''))
+        if st.button("Set Local Model", key='set_local_model'):
+            modify_env('local_model', local_model_path)
+            del st.session_state['set_local_model']
             st.rerun()
+        if 'local_model' in config:
+            st.write(f":green[Local model already set: {config['local_model']} :white_check_mark:]")
     else:
-        st.write(f":green[OpenAI_api_key detected :white_check_mark:]")
-        delete = st.button("Delete My API key", key = 'delete')
-        if delete:
-            modify_env('OpenAI_api_key',delete = True)
-            del st.session_state['delete'] 
-            # I need to use session states the above is a hack to fix death looping 
-            # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
-            st.rerun()
+        if 'OpenAI_api_key' not in config:
+            st.write(":red[No OpenAI key detected, please insert a key below]")
+            OpenAI_api_key = st.text_input("OpenAI_api_key", value="", type="password")
+            if st.button("Add Key", key='submit'):
+                modify_env('OpenAI_api_key', OpenAI_api_key)
+                del st.session_state['submit']
+                st.rerun()
+        else:
+            st.write(f":green[OpenAI_api_key detected :white_check_mark:]")
+
+    reset = st.button(":red[Reset LLM Configuration]", key='reset')
+    if reset:
+        modify_env('OpenAI_api_key', delete=True)
+        modify_env('local_model', delete=True)
+        del st.session_state['reset']
+        st.rerun()
     
     st.divider()
 
@@ -126,6 +133,6 @@ def initialise_mapping_recommendations():
         # I need to use session states the above is a hack to fix death looping 
         # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
         st.rerun()
-    
+
 
 
