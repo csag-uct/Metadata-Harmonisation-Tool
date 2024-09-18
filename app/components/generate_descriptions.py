@@ -6,14 +6,12 @@ from pdfminer.high_level import extract_text
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import OpenAIEmbeddings
 from scipy import spatial
-
 from dotenv import dotenv_values
-from openai import OpenAI # type: ignore
+from .util import init_llm_models
 
 results_path = "results"
 input_path = "input"
 preprocess_path = "preprocess"
-
 
 fs = fsspec.filesystem("")
 
@@ -56,9 +54,19 @@ def convert_pdf_to_txt():
             with fs.open(output_file, 'w') as of:
                 of.write(text)
 
-def embed_documents(input_path, study):
-    config = dotenv_values(".env")
-    embeddings_model = OpenAIEmbeddings(openai_api_key=config['OpenAI_api_key'])
+def get_embedding(openai_client, text, model="text-embedding-ada-002"):
+    text = str(text).replace("\n", " ")
+    if openai_client:
+        try:
+            response = openai_client.embeddings.create(input=[text], model=model)
+            return response.data[0].embedding
+        except Exception as e:
+            print(f"Error generating OpenAI embedding: {str(e)}")
+    else:
+        raise ValueError("No OpenAI client available. Please provide an OpenAI API key.")
+    return None
+
+def embed_documents(openai_client, input_path, study):
     with fs.open(f"{input_path}/{study}/context.txt", 'r', encoding='utf-8') as file:
         doc_text = file.read()
     text_splitter = RecursiveCharacterTextSplitter(
@@ -69,10 +77,11 @@ def embed_documents(input_path, study):
         is_separator_regex = True,
     )
     text_chunks = text_splitter.create_documents([doc_text])
-    embeddings = embeddings_model.embed_documents([x.page_content for x in text_chunks])
+    embeddings = []
+    for chunk in text_chunks:
+        embeddings.append(get_embedding(openai_client, chunk.page_content))
     return text_chunks, embeddings
 
-# defining function here just reduces complexity of below func not great practice I know - sorry!
 def get_relevent_context(varname, text_chunks, embeddings, relevance_dist = 'min'):
     config = dotenv_values(".env")
     embeddings_model = OpenAIEmbeddings(openai_api_key=config['OpenAI_api_key'])
@@ -98,17 +107,15 @@ def get_example_dict(described, variables_df, text_chunks = None, embeddings = N
         example_dict[example] = [example_description, example_context]
     return example_dict
 
-def get_llm_response(client, prompt):
-    config = dotenv_values(".env")
-    client = OpenAI(api_key = config['OpenAI_api_key'])
+def get_openai_llm_response(openai_client, prompt):
     llm_response = None
     try:
-        llm_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompt)
+        llm_response = openai_client.chat.completions.create(model="gpt-3.5-turbo", messages=prompt)
     except:
         time.sleep(1)
         print('retry')
         try:
-            llm_response = client.chat.completions.create(model="gpt-3.5-turbo", messages=prompt)
+            llm_response = openai_client.chat.completions.create(model="gpt-3.5-turbo", messages=prompt)
         except:
             llm_response = None
             print('openai fail') # if all fail good chance the context length is too long
@@ -117,12 +124,18 @@ def get_llm_response(client, prompt):
         return ''.join(['*',label]) # add a * to indicate this description is AI generated
     else: 
         return None
+    
+def get_llm_response(openai_client, prompt):
+    if openai_client:
+        return get_openai_llm_response(openai_client, prompt)
+    else:
+        raise ValueError("No OpenAI API client found. Please provide an API key to proceed.")
+
 
 def generate_descriptions():
     config = dotenv_values(".env")
-    client = OpenAI(api_key = config['OpenAI_api_key'])
+    openai_client = init_llm_models(config)
     init_prompt = config['init_prompt']
-    print(init_prompt)
     avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
     avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.'] # strip path and remove hidden folders
     done = [x for x in avail_studies if fs.exists(f'{input_path}/{x}/dataset_variables_auto_completed.csv')] # skip already done
@@ -147,7 +160,7 @@ def generate_descriptions():
             context_available = False
             text_chunks, embeddings = None, None
             if fs.exists(f"{input_path}/{study}/context.txt"):
-                text_chunks, embeddings = embed_documents(input_path, study) # embed docs
+                text_chunks, embeddings = embed_documents(openai_client, input_path, study) 
                 context_available = True
 
             # check if examples are available
@@ -167,7 +180,7 @@ def generate_descriptions():
                 prompt = return_prompt(init_prompt, var, context, example_dict)
 
                 # get LLM response
-                llm_response = get_llm_response(client, prompt)
+                llm_response = get_llm_response(openai_client, prompt)
                 if llm_response:
                     codebook[var] = llm_response
             

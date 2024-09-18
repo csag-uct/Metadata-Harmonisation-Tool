@@ -1,18 +1,8 @@
 import pandas as pd
 import fsspec
 from scipy import spatial
-
-from openai import OpenAI # type: ignore
-from dotenv import load_dotenv
-import os
-
-
-def get_embedding(text, client, model="text-embedding-ada-002"):
-   text = str(text).replace("\n", " ")
-   return client.embeddings.create(input = [text], model=model).data[0].embedding
-
-
 from dotenv import dotenv_values
+from .util import init_llm_models
 
 results_path = "results"
 input_path = "input"
@@ -20,26 +10,31 @@ preprocess_path = "preprocess"
 
 fs = fsspec.filesystem("")
 
-def embed_codebook():
-    config = dotenv_values(".env")
-    OpenAI_api_key = config['OpenAI_api_key']
-    client = OpenAI(api_key = OpenAI_api_key)
-    embedding_model = "text-embedding-ada-002"
+def get_embedding(openai_client, text, model="text-embedding-ada-002"):
+    text = str(text).replace("\n", " ")
+    if openai_client:
+        try:
+            response = openai_client.embeddings.create(input=[text], model=model)
+            return response.data[0].embedding
+        except Exception as e:
+            print(f"Error generating OpenAI embedding: {str(e)}")
+    else:
+        raise ValueError("No OpenAI client available. Please provide an OpenAI API key.")
+    return None
+
+
+def embed_codebook(openai_client):
     if not fs.exists(f'{input_path}/target_variables_with_embeddings.csv'):
         df = pd.read_csv(f"{input_path}/target_variables.csv")
         df = df[['variable_name','description']]
-        df["var_embeddings"] = df['variable_name'].apply(lambda x: get_embedding(x, client, model=embedding_model))
-        df["description_embeddings"] = df['description'].apply(lambda x: get_embedding(x, client, model=embedding_model))
+        df["var_embeddings"] = df['variable_name'].apply(lambda x: get_embedding(openai_client, x)) # type: ignore
+        df["description_embeddings"] = df['description'].apply(lambda x: get_embedding(openai_client, x)) # type: ignore
         df.to_csv(f'{input_path}/target_variables_with_embeddings.csv', index=False)
 
-def embed_study(study):
-    config = dotenv_values(".env")
-    OpenAI_api_key = config['OpenAI_api_key']
-    client = OpenAI(api_key = OpenAI_api_key)
-    embedding_model = "text-embedding-ada-002"
+def embed_study(openai_client, study):
     df = pd.read_csv(f'{input_path}/{study}/dataset_variables_auto_completed.csv')[['variable_name','description']]
-    df["var_embeddings"] = df['variable_name'].apply(lambda x: get_embedding(x, client, model=embedding_model))
-    df["description_embeddings"] = df['description'].apply(lambda x: get_embedding(x, client, model=embedding_model))
+    df["var_embeddings"] = df['variable_name'].apply(lambda x: get_embedding(openai_client, x)) # type: ignore
+    df["description_embeddings"] = df['description'].apply(lambda x: get_embedding(openai_client, x)) # type: ignore
     df.to_csv(f'{input_path}/{study}/dataset_variables_with_embeddings.csv', index=False)
 
 def calculate_cosine_similarity(embedding1, embedding2):
@@ -65,15 +60,16 @@ def generate_recommendations(study):
     study_df.to_csv(f'{input_path}/{study}/dataset_variables_with_recommendations', index = False)
 
 def get_embeddings():
-    embed_codebook()
+    config = dotenv_values(".env")
+    openai_client = init_llm_models(config)
+    embed_codebook(openai_client)
     avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
     avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.'] # strip path and remove hidden folders
     for study in avail_studies:
         if not fs.exists(f'{input_path}/{study}/dataset_variables_with_embeddings.csv'):
-            embed_study(study)
+            embed_study(openai_client, study)
 
 def get_recommendations():
-    embed_codebook()
     avail_studies = [x for x in fs.ls(f'{input_path}/') if fs.isdir(x)] # get directories
     avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.'] # strip path and remove hidden folders
     for study in avail_studies:
