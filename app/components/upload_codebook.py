@@ -11,21 +11,38 @@ preprocess_path = "preprocess"
 fs = fsspec.filesystem("")
 
 def streamlit_csv_reader(file_up):
-    "CSV files are a nightmare this func takes in a streamlit file uploader and returns a pandas df"
+    """
+    Reads a CSV file uploaded via Streamlit's file uploader and returns a pandas DataFrame.
+    
+    Args:
+        file_up (UploadedFile): The file uploaded via Streamlit's file uploader.
+    
+    Returns:
+        DataFrame: A pandas DataFrame containing the CSV data.
+    """
     stringio = StringIO(file_up.getvalue().decode("utf-8"))
     delim = clevercsv.Sniffer().sniff(stringio.read()).delimiter # type: ignore
     return pd.read_csv(file_up, sep = delim)
 
 def upload_codebook(file_in):
+    """
+    Processes the uploaded codebook CSV file and saves it to the input path.
+    
+    Args:
+        file_in (UploadedFile): The codebook file uploaded via Streamlit's file uploader.
+    """
     target_df = streamlit_csv_reader(file_in)
-    target_df= target_df[['variable_name', 'description']]
+    target_df = target_df[['variable_name', 'description']]
     fs.mkdirs(f"{input_path}/", exist_ok = True)
     target_df.to_csv(f"{input_path}/target_variables.csv", index = False)
 
 def upload_codebook_page():
-    col1, col2= st.columns(2)
+    """
+    Renders the Streamlit page for uploading and displaying the codebook.
+    """
+    col1, col2 = st.columns(2)
     with col1:
-        st.write("To Upload a new codebook complete the form below. By default an example codebook is added.")
+        st.write("To Upload a new codebook complete the form below.")
         with st.form("my_form"):
             new_target_df = st.file_uploader('Target Codebook', type='csv', accept_multiple_files=False, help = "Only CSV format accepted. The File should contain two columns titled 'variable_name' and 'description'. A description is required for each variable_name.")
             submit = st.form_submit_button(":green[Update Codebook]", help = 'Note when uploading a new codebook the recommendation engine will rerun for all studies. This may take a few minutes.')

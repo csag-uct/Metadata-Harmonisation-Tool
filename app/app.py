@@ -14,7 +14,7 @@ preprocess_path = "preprocess"
 
 fs = fsspec.filesystem("")
 
-study, variables_status, show_about, original_order = None, None, None, None  # just to clear error checking
+study, variables_status, show_about, original_order, relational_mode, enable_transformations = None, None, None, None, None, None  # just to clear error checking
 
 mapping_options = ['To do',
         'Successfully mapped',
@@ -27,21 +27,29 @@ st.set_page_config(layout="wide",
                    )
 
 with st.sidebar:
-    st.image('DS-I_logo.png', width=200)
-    st.write("## Metadata Harmonisation Tool")
+    st.image('logo.png', width=200)
+    st.write("## Mapping App")
     st.divider()
     page = st.selectbox('Page', ["About", "Upload Codebook","Upload Studies", "Initialise", "Map Studies", "Download Results"])
     if page == "Map Studies":
-        avail_studies = []
-        avail_studies = [f for f in fs.ls(f"{input_path}/") if fs.isdir(f)]
-        avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.']
-        study = st.selectbox('Study', avail_studies)
-        variables_status = st.selectbox('View variables:',mapping_options)
+        if fs.exists(f'input/'):
+            avail_studies = []
+            avail_studies = [f for f in fs.ls(f"{input_path}/") if fs.isdir(f)]
+            avail_studies = [f.split('/')[-1] for f in avail_studies if f.split('/')[-1][0] != '.']
+            study = st.selectbox('Study', avail_studies)
+            variables_status = st.selectbox('View variables:',mapping_options)
         col1, col2 = st.columns(2)
         with col1:
-            show_about = st.checkbox("About", help = 'Show an about section for the dataset you have selected. Hiding this can make the mapping process faster as you will not need to scroll up and down to submit')
+            show_about = st.checkbox("About", value = False, help = 'Show an about section for the dataset you have selected.')
         with col2:
-            original_order = st.checkbox('Unsort', help = 'Show variables in the original order of incoming datasets. This can be helpful if you believe one variable is related to a neighbouring variable in the table. Default is from easiest to hardest to map')
+            original_order = st.checkbox('Unsort', value = False, help = 'Show variables in the original order of incoming datasets. This can be helpful if you believe one variable is related to a neighbouring variable in the table.')
+        col3, col4 = st.columns(2)
+        with col3:
+            relational_mode = st.checkbox('Relational Mode', value = True, help = 'Enable this to map date and index (eg patient ID) to each variable. This allows for using the results to populate a relational database.')
+        with col4:
+            enable_transformations = st.checkbox('Transform Mode', value = True, help = 'This adds functionality to create and test transformations instructions for each variable. These instructions can then be used to transform data to a common format. Example transformation instructions available [here](https://github.com/csag-uct/Metadata-Harmonisation-Tool/pull/19#issuecomment-2356409576)')
+    st.divider()
+    st.write('Please report any issues to the [GitHub repository](https://github.com/csag-uct/Metadata-Harmonisation-Tool) or contact peter.marsh@uct.ac.za for more information.')
 
 if page == 'About':
     about_page()
@@ -52,6 +60,6 @@ elif page == "Upload Codebook":
 elif page == "Initialise":
     initialise_mapping_recommendations()
 elif page == 'Map Studies':
-    map_study(study, variables_status, show_about, original_order)
+    map_study(study, variables_status, show_about, original_order, relational_mode, enable_transformations)
 elif page == "Download Results":
     download_page()
