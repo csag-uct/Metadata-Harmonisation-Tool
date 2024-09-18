@@ -4,7 +4,6 @@ channels:
 dependencies:
 - fsspec
 - jupyterlab
-- langchain
 - numpy
 - openai
 - openpyxl

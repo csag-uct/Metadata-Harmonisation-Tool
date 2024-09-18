@@ -1,10 +1,8 @@
 import streamlit as st
 import pandas as pd
 import fsspec
-
 import clevercsv
 from io import StringIO
-
 
 results_path = "results"
 input_path = "input"
@@ -13,12 +11,30 @@ preprocess_path = "preprocess"
 fs = fsspec.filesystem("")
 
 def streamlit_csv_reader(file_up):
-    "CSV files are a nightmare this func takes in a streamlit file uploader and returns a pandas df"
+    """
+    Reads a CSV file uploaded via Streamlit's file uploader and returns a pandas DataFrame.
+    
+    Args:
+        file_up (UploadedFile): The file uploaded via Streamlit's file uploader.
+    
+    Returns:
+        DataFrame: A pandas DataFrame containing the CSV data.
+    """
     stringio = StringIO(file_up.getvalue().decode("utf-8"))
-    delim = clevercsv.Sniffer().sniff(stringio.read()).delimiter
+    delim = clevercsv.Sniffer().sniff(stringio.read()).delimiter # type: ignore
     return pd.read_csv(file_up, sep = delim)
 
 def add_new_study(study_title, study_description, variables, example_data, context_docs):
+    """
+    Adds a new study by saving the provided details and files to the filesystem.
+    
+    Args:
+        study_title (str): The title of the study.
+        study_description (str): The description of the study.
+        variables (UploadedFile): A CSV file containing variable names and descriptions.
+        example_data (UploadedFile): An optional CSV file containing example data.
+        context_docs (UploadedFile): An optional PDF file containing contextual documents.
+    """
     variables_df = streamlit_csv_reader(variables)[['variable_name', 'description']]
     study_path = f"{input_path}/{study_title}"
     fs.mkdirs(study_path, exist_ok = True)
@@ -34,6 +50,9 @@ def add_new_study(study_title, study_description, variables, example_data, conte
             file.write(context_docs.getvalue())
 
 def add_study_page():
+    """
+    Renders the Streamlit page for adding a new study, including form inputs and submission handling.
+    """
     if not fs.exists(f"input/target_variables.csv"):
         st.write(":red[Please upload a target codebook before submitting a study to map]")
         disable = True
