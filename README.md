@@ -1,6 +1,8 @@
-# Metadata Harmonisation Tool
+# Data Harmonisation Tool
 
 This is a [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variable names in a dataset to that of a target codebook. The first and often most tedious step in developing a common data model. 
+
+*The tool has been updated to support transformations and building relations between variables. updating docs on the to do list. (PR's welcome :))*
 
 ![GUI screenshot](GUI.png)
 
@@ -48,7 +50,7 @@ pip install -r requirements.txt # some packages not available on conda channels
 
 cd app/
 
-streamlit run mapping_interface.py
+streamlit run app.py
 ```
 The app will then be accessible from your browser at [localhost:8501/](localhost:8501/) 
 
