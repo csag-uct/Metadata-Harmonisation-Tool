@@ -14,26 +14,13 @@ preprocess_path = "preprocess"
 
 fs = fsspec.filesystem("")
 
-def calculate_cosine_similarity(embedding1, embedding2):
-    """
-    Calculate the cosine similarity between two embeddings.
-
-    Args:
-        embedding1 (list): The first embedding vector.
-        embedding2 (list): The second embedding vector.
-
-    Returns:
-        float: The cosine similarity between the two embeddings.
-    """
-    similarity = spatial.distance.cosine(embedding1, embedding2)
-    return similarity
-
-def get_index(list_in, by):
+def get_index(list_in, n, by):
     """
     Get the indices of the top 3 minimum or maximum values in a list.
 
     Args:
         list_in (list): The list of values.
+        n (int): The number of indices to get.
         by (str): 'min' to get indices of the smallest values, 'max' for the largest.
 
     Returns:
@@ -42,9 +29,9 @@ def get_index(list_in, by):
     indexed_values = list(enumerate(list_in)) # create tuple with og index
     sorted_values = sorted(indexed_values, key=lambda x: x[1]) # sort tuples by values (2nd values in tuple)
     if by == 'min':
-        return [index for index, _ in sorted_values[:3]] # return index
+        return [index for index, _ in sorted_values[:n]] # return index
     elif by == 'max':
-        return [index for index, _ in sorted_values[-3:]]
+        return [index for index, _ in sorted_values[-n:]]
 
 def return_prompt(init_prompt, variable, context='Not available', example_dict=None):
     """
@@ -188,9 +175,10 @@ def embed_documents(openai_client, input_path, study):
     with fs.open(f"{input_path}/{study}/context.txt", 'r', encoding='utf-8') as file:
         doc_text = file.read()
     text_chunks = split_text_recursively(doc_text, chunk_size=1000, chunk_overlap=20)
+    text_chunks = [chunk for chunk in text_chunks if chunk.strip()]  # Drop empty chunks
     embeddings = []
     for chunk in text_chunks:
-        embeddings.append(get_embedding(openai_client, chunk.page_content))
+        embeddings.append(get_embedding(openai_client, chunk))
     return text_chunks, embeddings
 
 def get_relevent_context(openai_client, varname, text_chunks, embeddings, relevance_dist='min'):
@@ -208,10 +196,10 @@ def get_relevent_context(openai_client, varname, text_chunks, embeddings, releva
         str: The relevant context for the variable.
     """
     embedded_query = get_embedding(openai_client, f"variable name:  {varname}, label or description: ")
-    dists = [calculate_cosine_similarity(embedded_query, x) for x in embeddings]
-    idx = get_index(dists, by = relevance_dist)
+    dists = [spatial.distance.cosine(embedded_query, x) for x in embeddings]
+    idx = get_index(dists, 3, by = relevance_dist)
     example_context = [text_chunks[i] for i in idx] # type: ignore
-    return '\n'.join([x.page_content for x in example_context])
+    return '\n'.join([x for x in example_context])
 
 def get_example_dict(openai_client, described, variables_df, text_chunks=None, embeddings=None):
     """
@@ -342,6 +330,7 @@ def generate_descriptions():
                     codebook[var] = llm_response
             
             # update variables_df
+            variables_df['description'] = variables_df['description'].astype(str)
             for var in list(codebook):
                 variables_df.loc[variables_df['variable_name'] == var,'description'] = codebook[var]
             
