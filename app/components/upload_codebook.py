@@ -3,6 +3,8 @@ import pandas as pd
 import fsspec
 import clevercsv
 from io import StringIO
+from dotenv import dotenv_values
+from .util import modify_env
 
 results_path = "results"
 input_path = "input"
@@ -32,7 +34,12 @@ def upload_codebook(file_in):
         file_in (UploadedFile): The codebook file uploaded via Streamlit's file uploader.
     """
     target_df = streamlit_csv_reader(file_in)
-    target_df = target_df[['variable_name', 'description', 'dType', 'Unit', 'Categories', 'Unit Example']]
+    try:
+        target_df = target_df[['variable_name', 'description', 'dType', 'Unit', 'Categories', 'Unit Example']]
+        modify_env('auto_transform_available', 'yes')
+    except:
+        target_df = target_df[['variable_name', 'description']]
+        modify_env('auto_transform_available', 'no')
     fs.mkdirs(f"{input_path}/", exist_ok = True)
     target_df.to_csv(f"{input_path}/target_variables.csv", index = False)
 
@@ -52,7 +59,12 @@ def upload_codebook_page():
     with col2:
         if fs.exists(f'{input_path}/target_variables.csv'):
             st.write("Target Codebook")
-            target_df = pd.read_csv(f'{input_path}/target_variables.csv')[['variable_name', 'description', 'dType', 'Unit', 'Categories', 'Unit Example']]
+            config = dotenv_values(".env")
+            if config['auto_transform_available'] == 'yes':
+                target_df = pd.read_csv(f'{input_path}/target_variables.csv')[['variable_name', 'description', 'dType', 'Unit', 'Categories', 'Unit Example']]
+            else:
+                target_df = pd.read_csv(f'{input_path}/target_variables.csv')[['variable_name', 'description']]
+                st.write("Auto transformations will not be available for this study as the target codebook does not contain dType, Unit, Categories, or Unit Example columns.")
             st.dataframe(target_df, use_container_width=True)
         else:
             st.write("No codebook is currently loaded")

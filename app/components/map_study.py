@@ -4,6 +4,7 @@ import fsspec
 import duckdb
 import time
 import numpy as np
+from dotenv import dotenv_values
 from .generate_transformations import generate_transformations
 from .transformation_utils import generic_direct_conversion, generic_catagorical_conversion
 from .util import split_var_confidence, format_example_data, add_to_session_state, pre_process_recomendations
@@ -111,7 +112,15 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
         relational_mode (bool): Whether to enable relational mode.
         enable_transformations (bool): Whether to enable transformations.
     """
-    codebook = pd.read_csv(f'{input_path}/target_variables.csv')
+    config = dotenv_values(".env")
+
+    if 'auto_transform_available' in list(config):
+        auto_transform_available = config['auto_transform_available']
+    else:
+        auto_transform_available = 'no'
+
+    if auto_transform_available == 'yes':
+        codebook = pd.read_csv(f'{input_path}/target_variables.csv')
     
     if study == None:
         st.write(':red[No studies available, please initialise the mapping app]')
@@ -220,7 +229,7 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
                                      index=1,
                                      format_func=lambda x: mapping_options[x])  # returns index of options
                 notes = st.text_input('Notes about this variable:', '')
-                if enable_transformations:
+                if enable_transformations and example_avail:
 
                     codebook_var, codebook_conf = split_var_confidence(mapped_variable)
                     
@@ -229,42 +238,44 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
                     else:
                         codebook_conf = 0
                     
-                    codebook_var_df = codebook[codebook['description'] == codebook_var]
-
-                    value = codebook_var_df.Categories.item()
-                    if isinstance(value, float) and np.isnan(value):
-                        transformation_type_idx = 0  # direct
-                        transformation_instruction = 'x'
+                    dtype_options = ['float', 'integer', 'string', 'boolean']
+                    if auto_transform_available == 'yes':
+                        codebook_var_df = codebook[codebook['description'] == codebook_var]
+                        value = codebook_var_df.Categories.item()
+                        if isinstance(value, float) and np.isnan(value): # direct
+                            transformation_type_idx = 0 
+                            transformation_instruction = 'x'
+                            dtype = codebook_var_df.dType.item()
+                            try:
+                                target_dtype_idx = dtype_options.index(dtype)
+                            except:
+                                target_dtype_idx = 0
+                        else: # categorical
+                            transformation_type_idx = 1
+                            transformation_instruction = '{}'
+                        generate_instructions = st.button('Auto Generate Transformation Instructions', key='generate')
+                        if generate_instructions:
+                            transformation_instruction = generate_transformations(split_var_confidence(mapped_variable)[0], variable_to_map, example_data, transformation_instruction, codebook_var_df)
+                        elif codebook_conf > 90:
+                            transformation_instruction = generate_transformations(split_var_confidence(mapped_variable)[0], variable_to_map, example_data, transformation_instruction, codebook_var_df)
                     else:
-                        transformation_type_idx = 1  # categorical
-                        transformation_instruction = '{}'
-
-
-                    generate_instructions = st.button('Generate transformation instructions', key='generate')
-                    if generate_instructions:
-                        transformation_instruction = generate_transformations(split_var_confidence(mapped_variable)[0], variable_to_map, example_data, transformation_instruction, codebook_var_df)
-                    elif codebook_conf > 90:
-                        transformation_instruction = generate_transformations(split_var_confidence(mapped_variable)[0], variable_to_map, example_data, transformation_instruction, codebook_var_df)
-                    if example_avail:
-                        col3, col4 = st.columns(2)
-                        with col3:
-                            transformation_instruction_final = st.text_input('Transformation instructions for this variable:', transformation_instruction)
-                            transformation_types = ['Direct', 'Categorical']
-                            transformation_type = st.selectbox('Type of transformation applied to this variable:', transformation_types, index=transformation_type_idx)
-                            if transformation_type == 'Direct':
-                                dtype_options = ['float', 'integer', 'string', 'boolean']
-                                source_dtype = st.selectbox('Source data type:', dtype_options)
-                                dtype = codebook_var_df.dType.item()
-                                try:
-                                    target_dtype_idx = dtype_options.index(dtype)
-                                except:
-                                    target_dtype_idx = 0
-                                target_dtype = st.selectbox('Target data type:', dtype_options, index=target_dtype_idx)
-                            else:
-                                source_dtype = None
-                                target_dtype = None
-                        with col4:
-                            test_transformation(example_data, transformation_type, transformation_instruction_final, source_dtype, target_dtype)
+                        generate_instructions = st.button('Auto Generate Transformation Instructions', key='generate', disabled=True, help='Auto transformations are not available for this study as the target codebook does not contain dType, Unit, Categories, or Unit Example columns.')
+                        transformation_type_idx = 0
+                        transformation_instruction = 'x'
+                        target_dtype_idx = 0
+                    col3, col4 = st.columns(2)
+                    with col3:
+                        transformation_instruction_final = st.text_input('Transformation instructions for this variable:', transformation_instruction)
+                        transformation_types = ['Direct', 'Categorical']
+                        transformation_type = st.selectbox('Type of transformation applied to this variable:', transformation_types, index=transformation_type_idx)
+                        if transformation_type == 'Direct':
+                            source_dtype = st.selectbox('Source data type:', dtype_options)
+                            target_dtype = st.selectbox('Target data type:', dtype_options, index=target_dtype_idx)
+                        else:
+                            source_dtype = None
+                            target_dtype = None
+                    with col4:
+                        test_transformation(example_data, transformation_type, transformation_instruction_final, source_dtype, target_dtype)
                 else:
                     transformation_instruction_final = None
                     transformation_type = None
@@ -276,7 +287,7 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
                     _ = write_to_results(study, variable_to_map, mapped_variable, notes, avail_idx, results_file, transformation_instruction_final, transformation_type, source_dtype, target_dtype, patient_id, date)
                     # sleep a few seconds to show results being written
                     time.sleep(0.2)
-                    # I need to use session states, the above is a hack to fix death looping 
+                    # I need to use session states, the above is a hack to fix death looping, but also this is vagualy equivalant to repaint in react which is what I want
                     # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
                     del st.session_state['submit']
                     st.rerun()
