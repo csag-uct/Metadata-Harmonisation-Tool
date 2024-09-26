@@ -32,7 +32,7 @@ def upload_codebook(file_in):
         file_in (UploadedFile): The codebook file uploaded via Streamlit's file uploader.
     """
     target_df = streamlit_csv_reader(file_in)
-    target_df = target_df[['variable_name', 'description']]
+    target_df = target_df[['variable_name', 'description', 'dType', 'Unit', 'Categories', 'Unit Example']]
     fs.mkdirs(f"{input_path}/", exist_ok = True)
     target_df.to_csv(f"{input_path}/target_variables.csv", index = False)
 
@@ -52,7 +52,7 @@ def upload_codebook_page():
     with col2:
         if fs.exists(f'{input_path}/target_variables.csv'):
             st.write("Target Codebook")
-            target_df = pd.read_csv(f'{input_path}/target_variables.csv')[['variable_name', 'description']]
+            target_df = pd.read_csv(f'{input_path}/target_variables.csv')[['variable_name', 'description', 'dType', 'Unit', 'Categories', 'Unit Example']]
             st.dataframe(target_df, use_container_width=True)
         else:
             st.write("No codebook is currently loaded")

@@ -43,7 +43,6 @@ def embed_codebook(openai_client):
     """
     if not fs.exists(f'{input_path}/target_variables_with_embeddings.csv'):
         df = pd.read_csv(f"{input_path}/target_variables.csv")
-        df = df[['variable_name','description']]
         df["var_embeddings"] = df['variable_name'].apply(lambda x: get_embedding(openai_client, x)) # type: ignore
         df["description_embeddings"] = df['description'].apply(lambda x: get_embedding(openai_client, x)) # type: ignore
         df.to_csv(f'{input_path}/target_variables_with_embeddings.csv', index=False)

@@ -4,6 +4,7 @@ import fsspec
 import duckdb
 import time
 import numpy as np
+from .generate_transformations import generate_transformations
 
 fs = fsspec.filesystem("")
 
@@ -368,10 +369,15 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
                                      format_func=lambda x: mapping_options[x])  # returns index of options
                 notes = st.text_input('Notes about this variable:', '')
                 if enable_transformations:
+                    transformation_instructions_initial = None
+                    test = st.button('Generate transformation instructions', key='generate')
+                    if test:
+                        transformation_instructions_initial = generate_transformations(split_var_confidence(mapped_variable)[0], variable_to_map, example_data, transformation_instructions_initial)
+                        print(transformation_instructions_initial)
                     if example_avail:
                         col3, col4 = st.columns(2)
                         with col3:
-                            transformation_instructions = st.text_input('Transformation instructions for this variable:', '')
+                            transformation_instructions = st.text_input('Transformation instructions for this variable:', transformation_instructions_initial)
                             transformation_type = st.selectbox('Type of transformation applied to this variable:', ['Direct', 'Categorical'])
                             if transformation_type == 'Direct':
                                 source_dtype = st.selectbox('Source data type:', ['float', 'integer', 'string', 'boolean'])
