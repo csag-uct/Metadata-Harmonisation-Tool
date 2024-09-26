@@ -243,12 +243,12 @@ def get_openai_llm_response(openai_client, prompt):
     """
     llm_response = None
     try:
-        llm_response = openai_client.chat.completions.create(model="gpt-3.5-turbo", messages=prompt)
+        llm_response = openai_client.chat.completions.create(model="gpt-4o-mini", messages=prompt)
     except:
         time.sleep(1)
         print('retry')
         try:
-            llm_response = openai_client.chat.completions.create(model="gpt-3.5-turbo", messages=prompt)
+            llm_response = openai_client.chat.completions.create(model="gpt-4o-mini", messages=prompt)
         except:
             llm_response = None
             print('openai fail') # if all fail good chance the context length is too long

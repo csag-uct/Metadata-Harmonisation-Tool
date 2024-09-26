@@ -83,8 +83,9 @@ def return_direct_conversion_prompt(source_var, target_var, initial_instructions
                                                     x = eval(x_str)
                                                     return dtype_conversion(x, source_dtype)
 
-                                                please ensure your output (it will be returned via api) can be directly passed to the function as the x_str argument. 
-                                                If the values should not be mutated return x. If the values need to be multiplied by 10 return x*10. If only the values before a be preserved return x.split('/')[0]. 
+                                                please ensure your output (it will be returned via api) can be directly passed to the function as the x_str argument.
+                                                Do not try change the data type in your instructions this is handled within the generic_direct_conversion function. 
+                                                If the values should not be mutated return x. If the values need to be multiplied by 10 return x*10. If only the values before a / be preserved return x.split('/')[0]. 
                                                 """},
                 {"role": "assistant", "content": "x*10"},
                 {"role": "user", "content": f"""
@@ -102,7 +103,6 @@ def return_direct_conversion_prompt(source_var, target_var, initial_instructions
                                                     return dtype_conversion(x, source_dtype)
 
                                                 please ensure your output (it will be returned via api) can be directly passed to the function as the x_str argument.
-                                                Where nan's are present above please use your intuition to infer the most likely correct instruction. Do not add any comments. 
                                                 Do not try change the data type in your instructions this is handled within the generic_direct_conversion function. 
                                                 If the values should not be mutated return x. If the values need to be multiplied by 10 return x*10. If only the values before a / be preserved return x.split('/')[0]. 
                                             """}
@@ -122,7 +122,7 @@ def get_openai_llm_response(openai_client, prompt):
     """
     llm_response = None
     try:
-        llm_response = openai_client.chat.completions.create(model="gpt-3.5-turbo", messages=prompt)
+        llm_response = openai_client.chat.completions.create(model="gpt-4o-mini", messages=prompt)
     except:
         time.sleep(1)
         print('retry')
@@ -136,13 +136,11 @@ def get_openai_llm_response(openai_client, prompt):
     else: 
         return None
     
-def generate_transformations(target_var, source_var, examples, initial_instructions):
+def generate_transformations(target_var, source_var, examples, initial_instructions, codebook):
     
     config = dotenv_values(".env")
     openai_client = init_llm_models(config)
 
-    codebook = pd.read_csv(f'{input_path}/target_variables.csv')
-    codebook = codebook.loc[codebook['description'] == target_var]
     categories = codebook['Categories'].item()
     target_dtype = codebook['dType'].item()
     target_unit = codebook['Unit'].item()
@@ -154,9 +152,4 @@ def generate_transformations(target_var, source_var, examples, initial_instructi
         prompts = return_direct_conversion_prompt(source_var, target_var, initial_instructions, examples, target_dtype, target_unit, target_example)
     
     return get_openai_llm_response(openai_client, prompts)
-
-
-
-if __name__ == '__main__':
-    print(generate_transformations('Sex', 'gender', '[0.0, 1.0, nan, nan, nan, nan, nan, nan, nan, nan]', '0: man, 1:woman'))
 

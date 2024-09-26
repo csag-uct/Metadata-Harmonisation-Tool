@@ -1,149 +1,44 @@
 variable_name,description,dType,Unit,Categories,Unit Example,Ontology Code,URL,Associated Ontology Codes
-date,Date,datetime,YYYY-MM-DD,,2023-06-26,NCIT:C25164,http://purl.obolibrary.org/obo/NCIT_C25164,
+date,Date,datetime,YYYY-MM-DD,,2023/06/26,NCIT:C25164,http://purl.obolibrary.org/obo/NCIT_C25164,
 time (local),Time,datetime,hh:mm:ss,,12:12:12,NCIT:C25207,http://purl.obolibrary.org/obo/NCIT_C25207,EFO:0000721
-dob,Birth Date,datetime,YYYY-MM-DD,,2023-06-26,NCIT:C68615,http://purl.obolibrary.org/obo/NCIT_C68615,EFO:0004950
-country,Country,str,ISO 3166-1 alpha-3 codes,,ZAF,NCIT:C25464,http://purl.obolibrary.org/obo/NCIT_C25464,"SIO:000664, HANCESTRO:0003"
-patient_id,Patient Identifier,str,,,BA112,NCIT:C164337,http://purl.obolibrary.org/obo/NCIT_C164337,NCIT:C16960
-age_enrolment,Age-Years,int,years,,62,NCIT:C37908,http://purl.obolibrary.org/obo/NCIT_C37908,EFO:0000246
-race,Race,str,categorical,"White', 'Black African', 'Asian', 'Mixed', 'Other'",Black African,NCIT:C17049,http://purl.obolibrary.org/obo/NCIT_C17049,"DOID:1574, EFO:0001799"
-sex,Sex,str,categorical,"Male', 'Female', 'Intersex'",Female,NCIT:C28421,http://purl.obolibrary.org/obo/NCIT_C28421,"PATO:0001894, OMIT:0013619"
+dob,Birth Date,datetime,YYYY-MM-DD,,2023/06/26,NCIT:C68615,http://purl.obolibrary.org/obo/NCIT_C68615,EFO:0004950
+country,Country,string,ISO 3166-1 alpha-3 codes,,ZAF,NCIT:C25464,http://purl.obolibrary.org/obo/NCIT_C25464,"SIO:000664, HANCEstringO:0003"
+patient_id,Patient Identifier,string,,,BA112,NCIT:C164337,http://purl.obolibrary.org/obo/NCIT_C164337,NCIT:C16960
+age_enrolment,Age-Years,integer,years,,62,NCIT:C37908,http://purl.obolibrary.org/obo/NCIT_C37908,EFO:0000246
+sex,Sex,string,categorical,"Male', 'Female', 'integerersex'",Female,NCIT:C28421,http://purl.obolibrary.org/obo/NCIT_C28421,"PATO:0001894, OMIT:0013619"
 height,Height,float,cm,,,NCIT:C25347,http://purl.obolibrary.org/obo/NCIT_C25347,EFO:0004339
-weight,Body Weight,int,kg,,52,NCIT:C81328,http://purl.obolibrary.org/obo/NCIT_C81328,"PATO:0000128, SCDO:0000152, EFO:0004338"
-bmi,Body Mass Index,int,kg/m2,,24,NCIT:C16358,http://purl.obolibrary.org/obo/NCIT_C16358,"EFO:0004340, OMIT:0016586, ExO:0000105, CMO:0000105"
-study_location,Location,str,text,,Johannesburg,NCIT:C25341,http://purl.obolibrary.org/obo/NCIT_C25341,ExO:0000017
-participant_address,Address,str,text,,"Unit 3, 23 First Street, Johannesburg",NCIT:C25407,http://purl.obolibrary.org/obo/NCIT_C25407,SIO:000172
-housing_type,Housing Type,str,categorical,"‘Rural workers housing’, ’Smallholdings / agriculture’, ’Flats, hostels, townhouses, semi-detached’, ’Estate and security village housing’, ’Difficult to classify as formal or informal’, ’Informal housing structures’, ’Backyard structures’, ’Free hold formal houses’",Informal housing structures,NCIT:C90397,http://purl.obolibrary.org/obo/NCIT_C90397,
-num_people_household,Number in household (observable entity),int ,number of people,,3,SNOMED:224525003,http://snomed.info/id/224525003,
-aircon_access,exposure to air conditioning unit,str,binary,"yes', 'no'",yes,ECTO:1000032,http://purl.obolibrary.org/obo/ECTO_1000032,OMIT:0001816
-income,Income,int,USD,,2000,NCIT:C41150,http://purl.obolibrary.org/obo/NCIT_C41150,"OMIT:0008309,"
-house_income,Household Income,int,USD,,2001,NCIT:C70811,http://purl.obolibrary.org/obo/NCIT_C70811,EFO:0009695
-substance_abuse_preg,Maternal Substance Abuse during Pregnancy,str,,"yes', 'no'",,NCIT:C182281,http://purl.obolibrary.org/obo/NCIT_C182281,GSSO:006601
-substance_abuse,Substance Abuse,str,binary,"yes', 'no'",Yes,NCIT:C18272,http://purl.obolibrary.org/obo/NCIT_C18272,GSSO:006601
-smoking_status,Smoking Status,str,binary,"yes', 'no'",Yes,NCIT:C19796,http://purl.obolibrary.org/obo/NCIT_C17934,"ExO:0000113, ECTO:6000029, NCIT:C17934"
-alcohol_status,Alcohol Abuse,str,binary,"yes', 'no'",yes,NCIT:C20701,http://purl.obolibrary.org/obo/NCIT_C20701,"MONDO:0002046, SNOMED:15167005"
-employment,Employment Status,str,binary,"yes', 'no'",yes,NCIT:C179143,http://purl.obolibrary.org/obo/NCIT_C179143,"OPMI:0000122, EFO:0005241, SDGIO:00010029, SNOMED:224362002, SCDO:0000306"
-education_years,Education Level,int,years,,9,NCIT:C17953,http://purl.obolibrary.org/obo/NCIT_C17953,"GECKO:0000065, OPMI:0000111"
-loss_to_follow_up,Lost To Follow-Up,str,binary,"yes', 'no'",yes,NCIT:C70740,http://purl.obolibrary.org/obo/NCIT_C70740,"OMIT:0027493, SNOMED:399307001, NCIT:C48227"
-hypertension,Hypertension,str,binary,"yes', 'no'",yes,NCIT:C3117,http://purl.obolibrary.org/obo/NCIT_C3117,"OMIT:0008107, 
+weight,Body Weight,integer,kg,,52,NCIT:C81328,http://purl.obolibrary.org/obo/NCIT_C81328,"PATO:0000128, SCDO:0000152, EFO:0004338"
+bmi,Body Mass Index,integer,kg/m2,,24,NCIT:C16358,http://purl.obolibrary.org/obo/NCIT_C16358,"EFO:0004340, OMIT:0016586, ExO:0000105, CMO:0000105"
+substance_abuse,Substance Abuse,string,binary,"yes', 'no'",Yes,NCIT:C18272,http://purl.obolibrary.org/obo/NCIT_C18272,GSSO:006601
+smoking_status,Smoking Status,string,binary,"yes', 'no'",Yes,NCIT:C19796,http://purl.obolibrary.org/obo/NCIT_C17934,"ExO:0000113, ECTO:6000029, NCIT:C17934"
+alcohol_status,Alcohol Abuse,string,binary,"yes', 'no'",yes,NCIT:C20701,http://purl.obolibrary.org/obo/NCIT_C20701,"MONDO:0002046, SNOMED:15167005"
+employment,Employment Status,string,binary,"yes', 'no'",yes,NCIT:C179143,http://purl.obolibrary.org/obo/NCIT_C179143,"OPMI:0000122, EFO:0005241, SDGIO:00010029, SNOMED:224362002, SCDO:0000306"
+education_years,Education Level,integer,years,,9,NCIT:C17953,http://purl.obolibrary.org/obo/NCIT_C17953,"GECKO:0000065, OPMI:0000111"
+loss_to_follow_up,Lost To Follow-Up,string,binary,"yes', 'no'",yes,NCIT:C70740,http://purl.obolibrary.org/obo/NCIT_C70740,"OMIT:0027493, SNOMED:399307001, NCIT:C48227"
+hypertension,Hypertension,string,binary,"yes', 'no'",yes,NCIT:C3117,http://purl.obolibrary.org/obo/NCIT_C3117,"OMIT:0008107, 
 HP:0000822"
-hypertension_preg,Hypertension-Associated Pregnancy Disorder,int,binary,"yes', 'no'",Yes,NCIT:C9243,http://purl.obolibrary.org/obo/NCIT_C9243,MONDO:0024664
-hellp_syndrome,HELLP Syndrome,str,binary,"yes', 'no'",Yes,NCIT:C84750,http://purl.obolibrary.org/obo/NCIT_C84750,"MONDO:0008585, EFO:0007297, ORDO:244242"
-eclampsia,Eclampsia,str,binary,"yes', 'no'",Yes,NCIT:C87167,http://purl.obolibrary.org/obo/NCIT_C87167,"MONDO:0001754, DOID:13593"
-preeclampsia,Preeclampsia,str,binary,"yes', 'no'",yes,NCIT:C85021,http://purl.obolibrary.org/obo/NCIT_C85021,"MONDO:0005081, EFO:0000668, DOID:10591"
-preeclampsia_severe,Severe Preeclampsia,str,binary,"yes', 'no'",yes,NCIT:C112843,http://purl.obolibrary.org/obo/NCIT_C112843,MONDO:0001641
-antepartum_haemorrahge,Antepartum Hemorrhage,str,binary,"yes', 'no'",yes,NCIT:C114371,http://purl.obolibrary.org/obo/NCIT_C114371,SNOMED:34842007
-postpartum_haemorrahge,postpartum hemorrhage,str,binary,"yes', 'no'",yes,NCIT:C92853,http://purl.obolibrary.org/obo/NCIT_C92853,EFO:0009579
-placenta_praevia,placenta praevia,str,binary,"yes', 'no'",yes,NCIT:C26858,http://purl.obolibrary.org/obo/NCIT_C26858,"DOID:11060, MONDO:0005918, MeSH:D010923, MedDRA:10035119, NCIT:C26858, ICD10CM:O44, SNOMEDCT:157059004, UMLS:C0032046, EFO:0007442"
-abruptio_praevia,Placental Abruption,str,binary,"yes', 'no'",yes,NCIT:C26685,http://purl.obolibrary.org/obo/NCIT_C26685,"MONDO:0004846, EFO:1001754"
-duration_of_labour,Intrapartum (qualifier value),int,hours,,3,SNOMED:276987000,http://snomed.info/id/276987000,
-pprom,Preterm Premature Rupture of Membrane,str,binary,"yes', 'no'",yes,NCIT:C92862,http://purl.obolibrary.org/obo/NCIT_C92862,"MONDO:0012511, DOID:0111144, SNOMED:312974005, NCIT:C127944, NCIT:C127945, NCIT:C127946"
-prom,Premature rupture of membranes,str,binary,"yes', 'no'",yes,NCIT:C87113,http://purl.obolibrary.org/obo/NCIT_C87113,"SNOMEDCT:237266003, SNOMEDCT:44223004, MeSH:D005322,UMLS:C0015944, HP:0001788, NCIT:C127944, NCIT:C127945, NCIT:C127946"
-mode_of_delivery,Delivery Procedure,str,Nominal,"vaginal', 'assisted', 'operative'",vaginal,NCIT:C81179,http://purl.obolibrary.org/obo/NCIT_C81179,
-dm,Diabetes Mellitus,str,binary,"yes', 'no'",yes,NCIT:C2985,http://purl.obolibrary.org/obo/NCIT_C2985,"OMIT:0005196, HP:0000819, EFO:0000400"
-gestational_dm,Gestational Diabetes,str,binary,"yes', 'no'",yes,NCIT:C34942,http://purl.obolibrary.org/obo/NCIT_C34942,"MONDO:0005406, EFO:0004593, DOID:11714"
-number_of_foetuses,Number of Fetuses,int,number,,2,NCIT:C124626,http://purl.obolibrary.org/obo/NCIT_C124626,SNOMED:246435002
-post_term_birth,Post Term Birth,str,binary,"yes', 'no'",yes,NCIT:C114097,http://purl.obolibrary.org/obo/NCIT_C114097,GSSO:009647
-term_birth,Term Birth,str,binary,"yes', 'no'",yes,NCIT:C114093,http://purl.obolibrary.org/obo/NCIT_C114093,"SNOMED:21243004, GSSO:009661, OMIT:0023976"
-prem_birth,Preterm Birth,str,binary,"yes', 'no'",yes,NCIT:C92861,http://purl.obolibrary.org/obo/NCIT_C92861,"EFO:0003917, HP:0001622"
-extreme_prem_birth,Extreme Preterm Birth,str,binary,"yes', 'no'",yes,NCIT:C121307,http://purl.obolibrary.org/obo/NCIT_C121307,"GSSO:009656, HP:0025665,"
-very_prem_birth,Very Preterm Birth,str,binary,"yes', 'no'",yes,NCIT:C121306,http://purl.obolibrary.org/obo/NCIT_C121306,HP:0025666
-late_prem_birth,Late Preterm Birth,str,binary,"yes', 'no'",yes,NCIT:C114092,http://purl.obolibrary.org/obo/NCIT_C114092,
-gestational_age_unknown,Gestational age unknown (finding),str,binary,"yes', 'no'",yes,SNOMED:441924001,http://snomed.info/id/441924001,
-gest_age_delivery,Gestational Age at Birth (days),int,days,,322,NCIT:C124435,http://purl.obolibrary.org/obo/NCIT_C124435,SNOMEDCT: 412726003
-gest_age_delivery,Gestational Age at Birth (weeks),int,weeks,,322,NCIT:C124435,http://purl.obolibrary.org/obo/NCIT_C124435,SNOMEDCT: 412726003
-method_ga_estim_level1,GAIA Level 1 Assessment of Gestational Age,str,binary,"yes', 'no'",yes,NCIT:C128013,http://purl.obolibrary.org/obo/NCIT_C128013,
-method_ga_estim_level2a,GAIA Level 2a Assessment of Gestational Age,str,binary,"yes', 'no'",yes,NCIT:C128014,http://purl.obolibrary.org/obo/NCIT_C128014,
-method_ga_estim_level2b,GAIA Level 2b Assessment of Gestational Age,str,binary,"yes', 'no'",yes,NCIT:C128015,http://purl.obolibrary.org/obo/NCIT_C128015,
-method_ga_estim_level3a,GAIA Level 3a Assessment of Gestational Age,str,binary,"yes', 'no'",yes,NCIT:C128016,http://purl.obolibrary.org/obo/NCIT_C128016,
-method_ga_estim_level3b,GAIA Level 3b Assessment of Gestational Age,str,binary,"yes', 'no'",yes,NCIT:C128017,http://purl.obolibrary.org/obo/NCIT_C128017,
-method_ga_estim_level,GAIA Gestational Age Levels of Diagnostic Certainty,str,categorical ,"1','2a','2b','3a','3b'",2a,NCIT:C128012,http://purl.obolibrary.org/obo/NCIT_C128012,
-birth_weight,Birth Weight,int,g,,2545,NCIT:C76325,http://purl.obolibrary.org/obo/NCIT_C76325,EFO:0004344
-low_birth_weight,Low Birth Weight,str,binary,"yes', 'no'",yes,NCIT:C34724,http://purl.obolibrary.org/obo/NCIT_C34724,"GSSO:009628, SYMP:0000322"
-very_low_birth_weight,Very Low Birth Weight,str,binary,"yes', 'no'",yes,NCIT:C114935,http://purl.obolibrary.org/obo/NCIT_C114935,"SSO:009629, EFO:0003965"
-extremely_low_birth_weight,Extremely Low Birth Weight,str,binary,"yes', 'no'",yes,NCIT:C114936,http://purl.obolibrary.org/obo/NCIT_C114936,GSSO:009630
-small_gest_age,Small for Gestational Age ,str,binary,"yes', 'no'",yes,NCIT:C114934,http://purl.obolibrary.org/obo/NCIT_C114934, 
-stillbirth,Stillbirth,str,binary,"yes', 'no'",yes,NCIT:C49151,http://purl.obolibrary.org/obo/NCIT_C49151, 
-stillbirth_type,Stillbirth Type,str,categorical ,"Antepartum', 'Intrapartum'",Antepartum,"NCIT:C113381, NCIT:C113382","http://purl.obolibrary.org/obo/NCIT_C113381, http://purl.obolibrary.org/obo/NCIT_C113382", 
-IUGR,Foetal Growth Restriction ,str,binary,"yes', 'no'",yes,EFO:0000495,http://www.ebi.ac.uk/efo/EFO_0000495,HP:0001511
-stunting,Nutritional stunting (disorder),str,binary,"yes', 'no'",yes,SNOMED:302869005,http://snomed.info/id/302869005, 
-congenital_abn,Congenital Abnormalities,str,binary,"yes', 'no'",yes,OMIT:0001030,http://purl.obolibrary.org/obo/OMIT_0001030, 
-apgar,Apgar Score,int,index,,1,NCIT:C73437,http://purl.obolibrary.org/obo/NCIT_C73437,
-death,Death Indicator,str,binary,"yes', 'no'",yes,NCIT:C93546,http://purl.obolibrary.org/obo/NCIT_C93546, 
-infant_mortality ,Infant Mortality,str,binary,"yes', 'no'",yes,NCIT:C16729,http://purl.obolibrary.org/obo/NCIT_C16729, 
-perinatal_mortality ,Perinatal Mortality ,str,binary,"yes', 'no'",yes,NCIT:C118676,http://purl.obolibrary.org/obo/NCIT_C118676, 
-neonatal_mortality_early,Early Neonatal Death,str,binary,"yes', 'no'",yes,NCIT:C116772,http://purl.obolibrary.org/obo/NCIT_C116772, 
-neonatal_mortality_late,Late Neonatal Death ,str,binary,"yes', 'no'",yes,NCIT:C116773,http://purl.obolibrary.org/obo/NCIT_C116773, 
-hospital_admission,Hospitalization,str,binary,"yes', 'no'",yes,SCDO:0000573,http://purl.obolibrary.org/obo/SCDO_0000573,
-gastroenteritis ,Gastroenteritis,str,binary,"yes', 'no'",yes,NCIT:C34632,http://purl.obolibrary.org/obo/NCIT_C34632,
-pneumonia ,Pneumonia ,str,binary,"yes', 'no'",yes,NCIT:C3333,http://purl.obolibrary.org/obo/NCIT_C3333,
-urinary_tract_infection,Urinary Tract Infection ,str,binary,"yes', 'no'",yes,NCIT:C50791,,
-groupb_strep_infection ,Group B Streptococcus Infection ,str,binary,"yes', 'no'",yes,NCIT:C87168,http://purl.obolibrary.org/obo/NCIT_C87168,
-neonatal_sepsis ,Neonatal Sepsis,str,binary,"yes', 'no'",yes,NCIT:C116802,http://purl.obolibrary.org/obo/NCIT_C116802,
-syphilis_status,Syphilis,str,binary,"positive', 'negative'",positive,NCIT:C35055,http://purl.obolibrary.org/obo/NCIT_C35055,"EFO:0007504, DOID:4166, MONDO:0005976, OMIT:0014449"
-hiv_status,HIV Status,str,binary,"positive', 'negative'",positive,NCIT:C157155,http://purl.obolibrary.org/obo/NCIT_C157155,
-HepB_status,Hepatitis B Infection,str,binary,"positive', 'negative'",positive,NCIT:C3097,http://purl.obolibrary.org/obo/NCIT_C3097,
-schistosomiasis_status,Schistosomiasis,str,binary,"positive', 'negative'",positive,NCIT:C35000,http://purl.obolibrary.org/obo/NCIT_C35000,"ORDO:1247, MONDO:0015254, EFO:1001475"
-tb_status,Tuberculosis,str,binary,"positive', 'negative'",positive,NCIT:C3423,http://purl.obolibrary.org/obo/NCIT_C3423,"DOID:399, MONDO:0018076"
+birth_weight,Birth Weight,integer,g,,2545,NCIT:C76325,http://purl.obolibrary.org/obo/NCIT_C76325,EFO:0004344
+stillbirth,Stillbirth,string,binary,"yes', 'no'",yes,NCIT:C49151,http://purl.obolibrary.org/obo/NCIT_C49151,
+apgar,Apgar Score,integer,index,,1,NCIT:C73437,http://purl.obolibrary.org/obo/NCIT_C73437,
+death,Death Indicator,string,binary,"yes', 'no'",yes,NCIT:C93546,http://purl.obolibrary.org/obo/NCIT_C93546,
+infant_mortality ,Infant Mortality,string,binary,"yes', 'no'",yes,NCIT:C16729,http://purl.obolibrary.org/obo/NCIT_C16729,
+hospital_admission,Hospitalization,string,binary,"yes', 'no'",yes,SCDO:0000573,http://purl.obolibrary.org/obo/SCDO_0000573,
+gastroenteritis ,Gastroenteritis,string,binary,"yes', 'no'",yes,NCIT:C34632,http://purl.obolibrary.org/obo/NCIT_C34632,
+pneumonia ,Pneumonia ,string,binary,"yes', 'no'",yes,NCIT:C3333,http://purl.obolibrary.org/obo/NCIT_C3333,
+urinary_tract_infection,Urinary Tract Infection ,string,binary,"yes', 'no'",yes,NCIT:C50791,http://purl.obolibrary.org/obo/NCIT_C50791,
+groupb_stringep_infection ,Group B streptococcus Infection ,string,binary,"yes', 'no'",yes,NCIT:C87168,http://purl.obolibrary.org/obo/NCIT_C87168,
+hiv_status,HIV Status,string,binary,"positive', 'negative'",positive,NCIT:C157155,http://purl.obolibrary.org/obo/NCIT_C157155,
+tb_status,Tuberculosis,string,binary,"positive', 'negative'",positive,NCIT:C3423,http://purl.obolibrary.org/obo/NCIT_C3423,"DOID:399, MONDO:0018076"
 haemoglobin,Hemoglobin,float,g/dL,,8.2,NCIT:C16676,http://purl.obolibrary.org/obo/NCIT_C16676,"CHEBI:35143, FMA:62293, NCIT:C64848"
-creat,Creatinine,int,μmol/L,,92,NCIT:C399,http://purl.obolibrary.org/obo/NCIT_C399,"CHEBI:16737, OMIT:0004699, MR:1000214, NCIT:C64547, UPa:UPC00791"
-creat_clearance,Creatinine Clearance,int,ml/min/ 1.73 m2,,68,NCIT:C25747,http://purl.obolibrary.org/obo/NCIT_C25747,CMO:0000765
-hiv_vl,HIV Viral Load Measurement,int,copies/mL,,245,NCIT:C92544,http://purl.obolibrary.org/obo/NCIT_C92544,NCIT:C74727
-cd4,CD4 Expressing Cell Count,int,cells/mm3,,245,NCIT:C103810,http://purl.obolibrary.org/obo/NCIT_C103810,
-plt,Platelet Count,int,10^9cells/L,,123,NCIT:C51951,http://purl.obolibrary.org/obo/NCIT_C51951,EFO:0004309
-ast,Aspartate Aminotransferase Measurement,int,U/l,,23,NCIT:C64467,http://purl.obolibrary.org/obo/NCIT_C64467,"MAXO:0000841, EFO:0004736"
-alt,Alanine Aminotransferase Measurement,int,U/l,,23,NCIT:C64433,http://purl.obolibrary.org/obo/NCIT_C64433,"MAXO:0000840, SCDO:0000035"
-urine_pcr,Protein to Creatinine Ratio Measurement,float,Ratio,,1.2,NCIT:C79463,http://purl.obolibrary.org/obo/NCIT_C79463,
-alp,Alkaline Phosphatase Measurement,int,U/l,,23,NCIT:C64432,http://purl.obolibrary.org/obo/NCIT_C64432,"MAXO:0000844, EFO:0004533"
-ggt,Gamma Glutamyl Transpeptidase Measurement,int,U/l,,23,NCIT:C64847,http://purl.obolibrary.org/obo/NCIT_C64847,"MAXO:0000842,"
-mcv,mean corpuscular volume,float,fL,,92.0,EFO:0004526,http://www.ebi.ac.uk/efo/EFO_0004526,"CMO:0000038, EFO:0004526"
-ferritin,Ferritin Measurement,int,ng/mL,,212,NCIT:C74737,http://purl.obolibrary.org/obo/NCIT_C74737,"EFO:0004459, SCDO:0001322"
-mchc,mean corpuscular hemoglobin concentration,int,g/dL,,24,EFO:0004528,http://www.ebi.ac.uk/efo/EFO_0004528,"EFO:0004528, CMO:0000291"
-hiv_resistance_mutations,Viral Resistance Domain,str,text,,M184V,NCIT:C106581,http://purl.obolibrary.org/obo/NCIT_C106581,
-hiv_drug_resistance,Drug resistance to antiretroviral therapy (disorder),str,binary,"positive', 'negative'",positive,SNOMED: 425581000,http://snomed.info/id/425581000,
-art_regimen,Highly Active Antiretroviral Therapy,str,binary,"positive', 'negative'",positive,NCIT:C16165,http://purl.obolibrary.org/obo/NCIT_C16165,
-art_adherance,Noncompliance with antiretroviral medication regimen (finding),str,binary,"positive', 'negative'",positive,SNOMED: 713017009,http://snomed.info/id/713017009,
-xray_findings,Study Subject Radiography Report,str,text,,Opacity left upper zone,NCIT:C115514,http://purl.obolibrary.org/obo/NCIT_C115514,
-oligohydramnios,Oligohydramnios,str,binary,"positive', 'negative'",positive,NCIT:C92839,http://purl.obolibrary.org/obo/NCIT_C92839,"OMIT:0016668, HP:0001562, EFO:0007401, MONDO:0005881, DOID:12215"
-tsh,thyroid stimulating hormone measurement,float,mIU/L,,3.2,EFO:0004748,http://www.ebi.ac.uk/efo/EFO_0004748,
-lrti,Lower Respiratory Tract Infection,str,binary,"positive', 'negative'",positive,NCIT:C35158,http://purl.obolibrary.org/obo/NCIT_C35158,
-urti,Upper Respiratory Tract Infection,str,binary,"positive', 'negative'",positive,NCIT:C35650,http://purl.obolibrary.org/obo/NCIT_C35650,
-direct_bili,Direct Bilirubin Measurement,int,μmol/l,,24,NCIT:C64481,http://purl.obolibrary.org/obo/NCIT_C64481,"SNOMED: 39748002, OPMI:0000018"
-indirect_bili,Indirect Bilirubin Measurement,int,μmol/l,,3,NCIT:C64483,http://purl.obolibrary.org/obo/NCIT_C64483,MAXO:0000849
-amylase,Amylase Measurement,int,U/L,,72,NCIT:C64434,http://purl.obolibrary.org/obo/NCIT_C64434,
-lipase,Lipase Measurement,int,U/L,,24,NCIT:C117748,http://purl.obolibrary.org/obo/NCIT_C117748,
-cholesterol,Cholesterol Measurement,str,mmol/L,,,NCIT:C105586,http://purl.obolibrary.org/obo/NCIT_C105586,
-mch,mean corpuscular hemoglobin,float,pg,,22.2,EFO:0004527,http://www.ebi.ac.uk/efo/EFO_0004527,
-ldlc,Low Density Lipoprotein Cholesterol Measurement,str,mmol/L,,,NCIT:C105588,http://purl.obolibrary.org/obo/NCIT_C105588,
-hdlc,High Density Lipoprotein Cholesterol Measurement,str,mmol/L,,,NCIT:C105587,http://purl.obolibrary.org/obo/NCIT_C105587,
-hba1c,Glycosylated Hemoglobin Measurement,float,%,,4.2,NCIT:C64849,http://purl.obolibrary.org/obo/NCIT_C64849,
-albumin,Albumin Measurement,int,g/L,,23,NCIT:C64431,http://purl.obolibrary.org/obo/NCIT_C64431,
-cortisol,Cortisol Measurement,float,nmol/L,,7.5,NCIT:C74781,http://purl.obolibrary.org/obo/NCIT_C74781,
-pth,Whole Parathyroid Hormone Measurement,int,pmol/L,,12,NCIT:C103451,http://purl.obolibrary.org/obo/NCIT_C103451,
-ft4,Free Thyroxine Measurement,float,pmol/L,,2.4,NCIT:C74786,http://purl.obolibrary.org/obo/NCIT_C74786,
-ft3,Free Triiodothyronine Measurement,float,pmol/L,,2.6,NCIT:C74787,http://purl.obolibrary.org/obo/NCIT_C74787,
-urea,Blood Urea Nitrogen Measurement,float,mmol/L,,6.4,NCIT:C61019,http://purl.obolibrary.org/obo/NCIT_C61019,
-calcium,Calcium Measurement,float,mmol/L,,2.3,NCIT:C64488,http://purl.obolibrary.org/obo/NCIT_C64488,
-dexa_scan,Bone Mineral Density Z-Score,float,Z-Score,,-1.2,NCIT:C139217,http://purl.obolibrary.org/obo/NCIT_C139217,
-uric_acid,Serum Uric Acid Measurement,float,mmol/L,,1.2,NCIT:C61034,http://purl.obolibrary.org/obo/NCIT_C61034,
-potassium,Potassium Measurement,float,mmol/L,,3.2,NCIT:C64853,http://purl.obolibrary.org/obo/NCIT_C64853,
-sodium,Sodium Measurement,str,binary,"positive', 'negative'",positive,NCIT:C64809,http://purl.obolibrary.org/obo/NCIT_C64809,
-covid_19_pcr,COVID-19 RT-PCR assay,str,binary,"positive', 'negative'",positive,CIDO:0000019,http://purl.obolibrary.org/obo/CIDO_0000019,
-crp,C-Reactive Protein Measurement,int,mg/mL,,242,NCIT:C64548,http://purl.obolibrary.org/obo/NCIT_C64548,"MAXO:0000551, EFO:0004458, SNOMED: 55235003"
-pct,Procalcitonin Measurement,float,ng/mL,,0.3,NCIT:C103430,http://purl.obolibrary.org/obo/NCIT_C103430,"EFO:0802910, MAXO:0000606"
-il-6,interleukin-6 measurement,float,pg/mL,,4.2,EFO:0004810,http://www.ebi.ac.uk/efo/EFO_0004810,
-inr,International Normalized Ratio,float,ratio,,1.2,NCIT:C25352,http://purl.obolibrary.org/obo/NCIT_C25352,
-d_dimers,D-Dimer Measurement,float,mg/L,,4.2,NCIT:C82621,http://purl.obolibrary.org/obo/NCIT_C82621,"EFO:0004507, EFO:0020313, MAXO:0000607"
-depression,Unipolar Depression,str,binary,"positive', 'negative'",positive,NCIT:C35094,http://purl.obolibrary.org/obo/NCIT_C35094,"OMIT:0005139, SCDO:0000360, HP:0000716, OMIT:0005141, SNOMED: 370143000, MONDO:0002009"
-gen_anxiety_disorder,Generalized Anxiety Disorder,str,binary,"positive', 'negative'",positive,NCIT:C92622,http://purl.obolibrary.org/obo/NCIT_C92622,
-adverse_event,Adverse Event,str,binary,"positive', 'negative'",positive,NCIT:C41331,http://purl.obolibrary.org/obo/NCIT_C41331,
-heart_rate,Heart Rate,int,bpm,,122,NCIT:C49677,http://purl.obolibrary.org/obo/NCIT_C49677,"CMO:0000002, OBA:1001087, EFO:0004326, SCDO:0000501"
-systolic_blood_pressure,Systolic Blood Pressure,int,mmHg,,122,NCIT:C25298,http://purl.obolibrary.org/obo/NCIT_C25298,"CMO:0000004, EFO:0006335"
-diastolic_blood_pressure,Diastolic Blood Pressure,int,mmHg,,80,NCIT:C25299,http://purl.obolibrary.org/obo/NCIT_C25299,"CMO:0000005, EFO:0006336"
-mean_arterial_pressure,Mean Arterial Pressure,int,mmHg,,72,NCIT:C49679,http://purl.obolibrary.org/obo/NCIT_C49679,EFO:0006340
-oxygen_saturation,Oxygen Saturation Measurement,int,%,,92,NCIT:C60832,http://purl.obolibrary.org/obo/NCIT_C60832,"MAXO:0000616, CMO:0001324, EFO:0005682"
-stroke,Stroke,str,binary,"positive', 'negative'",positive,NCIT:C3390,http://purl.obolibrary.org/obo/NCIT_C3390,"EFO:0000712, HP:0001297, OMIT:0020395, CDO:0001111, SYMP:0000734"
-myocardial_infarct,Myocardial Infarction,str,binary,"positive', 'negative'",positive,NCIT:C27996,http://purl.obolibrary.org/obo/NCIT_C27996,"EFO:0000612, MONDO:0005068, OMIT:0010238, HP:0001658, DOID:5844"
-parity,Parity,int ,number of deliveries,,3,NCIT:C16955,http://purl.obolibrary.org/obo/NCIT_C16955,"SNOMED:364325004, OMIT:0011294, PATO:0002370"
-gravidity,Number of Pregnancies,int ,number of pregnancies,,2,NCIT:C106551,http://purl.obolibrary.org/obo/NCIT_C106551,"OMIT:0020000, OBI:0002394, EFO:0009438, SNOMED:246211005"
-malaria,Malaria,str,binary,"positive', 'negative'",positive,NCIT:C34797,http://purl.obolibrary.org/obo/NCIT_C34797,"EFO:0001068, GSSO:006352, DOID:12365, MONDO:0005136"
-muac,Mid-Upper Arm Circumference,int ,cm,,18,NCIT:C124475,http://purl.obolibrary.org/obo/NCIT_C124475,OBI:0003416
+creat,Creatinine,integer,μmol/L,,92,NCIT:C399,http://purl.obolibrary.org/obo/NCIT_C399,"CHEBI:16737, OMIT:0004699, MR:1000214, NCIT:C64547, UPa:UPC00791"
+cd4,CD4 Expressing Cell Count,integer,cells/mm3,,245,NCIT:C103810,http://purl.obolibrary.org/obo/NCIT_C103810,
+adverse_event,Adverse Event,string,binary,"positive', 'negative'",positive,NCIT:C41331,http://purl.obolibrary.org/obo/NCIT_C41331,
+heart_rate,Heart Rate,integer,bpm,,122,NCIT:C49677,http://purl.obolibrary.org/obo/NCIT_C49677,"CMO:0000002, OBA:1001087, EFO:0004326, SCDO:0000501"
+systolic_blood_pressure,Systolic Blood Pressure,integer,mmHg,,122,NCIT:C25298,http://purl.obolibrary.org/obo/NCIT_C25298,"CMO:0000004, EFO:0006335"
+diastolic_blood_pressure,Diastolic Blood Pressure,integer,mmHg,,80,NCIT:C25299,http://purl.obolibrary.org/obo/NCIT_C25299,"CMO:0000005, EFO:0006336"
+mean_arterial_pressure,Mean Arterial Pressure,integer,mmHg,,72,NCIT:C49679,http://purl.obolibrary.org/obo/NCIT_C49679,EFO:0006340
+oxygen_saturation,Oxygen Saturation Measurement,integer,%,,92,NCIT:C60832,http://purl.obolibrary.org/obo/NCIT_C60832,"MAXO:0000616, CMO:0001324, EFO:0005682"
+stroke,stroke,string,binary,"positive', 'negative'",positive,NCIT:C3390,http://purl.obolibrary.org/obo/NCIT_C3390,"EFO:0000712, HP:0001297, OMIT:0020395, CDO:0001111, SYMP:0000734"
+myocardial_infarct,Myocardial Infarction,string,binary,"positive', 'negative'",positive,NCIT:C27996,http://purl.obolibrary.org/obo/NCIT_C27996,"EFO:0000612, MONDO:0005068, OMIT:0010238, HP:0001658, DOID:5844"
+malaria,Malaria,string,binary,"positive', 'negative'",positive,NCIT:C34797,http://purl.obolibrary.org/obo/NCIT_C34797,"EFO:0001068, GSSO:006352, DOID:12365, MONDO:0005136"
+muac,Mid-Upper Arm Circumference,integer ,cm,,18,NCIT:C124475,http://purl.obolibrary.org/obo/NCIT_C124475,OBI:0003416
