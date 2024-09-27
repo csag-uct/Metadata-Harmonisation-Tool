@@ -43,7 +43,6 @@ def embed_codebook(openai_client):
     """
     if not fs.exists(f'{input_path}/target_variables_with_embeddings.csv'):
         df = pd.read_csv(f"{input_path}/target_variables.csv")
-        df = df[['variable_name','description']]
         df["var_embeddings"] = df['variable_name'].apply(lambda x: get_embedding(openai_client, x)) # type: ignore
         df["description_embeddings"] = df['description'].apply(lambda x: get_embedding(openai_client, x)) # type: ignore
         df.to_csv(f'{input_path}/target_variables_with_embeddings.csv', index=False)
@@ -141,7 +140,7 @@ def generate_PID_date_recommendations(openai_client, study):
     date_distances = []
     for i in range(len(study_df)):
         study_var = study_df['description'].iloc[i]
-        date_embed = get_embedding(openai_client, f'date for variable: {study_var}')
+        date_embed = get_embedding(openai_client, f'Date of {study_var}')
         date_embed = str(date_embed) # need to convert to string so eval in cosine similarity func works
         study_df["date_distance"] = study_df['description_embeddings'].apply(lambda x: calculate_cosine_similarity(date_embed, x)) # type: ignore
         study_df_sorted = study_df.sort_values("date_distance")
@@ -154,7 +153,7 @@ def generate_PID_date_recommendations(openai_client, study):
     PID_distances = []
     for i in range(len(study_df)):
         study_var = study_df['description'].iloc[i]
-        PID_embed = get_embedding(openai_client, f'Index for variable: {study_var}')
+        PID_embed = get_embedding(openai_client, f'Unique Identifier of {study_var}')
         PID_embed = str(PID_embed) # need to convert to string so eval in cosine similarity func works
         study_df["PID_distance"] = study_df['description_embeddings'].apply(lambda x: calculate_cosine_similarity(PID_embed, x)) # type: ignore
         study_df_sorted = study_df.sort_values("PID_distance")

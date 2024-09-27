@@ -1,8 +1,8 @@
 ,variable_name,description
-0,pt,
-1,phyact,
-2,alcfrq,
-3,sbsmk,
+0,pt,patient ID
+1,phyact,physical activity
+2,alcfrq,alcohol frequency
+3,sbsmk,smoking status
 4,ethori_self,
 5,jobtyp,
 6,lvpl,

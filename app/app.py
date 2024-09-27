@@ -60,6 +60,9 @@ elif page == "Upload Codebook":
 elif page == "Initialise":
     initialise_mapping_recommendations()
 elif page == 'Map Studies':
-    map_study(study, variables_status, show_about, original_order, relational_mode, enable_transformations)
+    if study is not None:
+        map_study(study, variables_status, show_about, original_order, relational_mode, enable_transformations)
+    else:
+        st.write(':red[No studies available, please initialise the mapping app]')
 elif page == "Download Results":
     download_page()

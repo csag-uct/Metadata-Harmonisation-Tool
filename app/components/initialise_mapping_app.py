@@ -3,56 +3,13 @@ import fsspec
 from dotenv import dotenv_values
 from .get_recommendations import get_embeddings, get_recommendations, get_PID_date_recommendations
 from .generate_descriptions import generate_descriptions, convert_pdf_to_txt
+from .util import modify_env, delete_files_and_folders
 
 fs = fsspec.filesystem("")
 
 results_path = "results"
 input_path = "input"
 preprocess_path = "preprocess"
-
-def delete_files_and_folders(directory_path):
-    """
-    Delete all files and folders in the specified directory.
-
-    Args:
-        directory_path (str): Path to the directory to be cleared.
-    """
-    files_and_dirs = fs.ls(directory_path)
-    for item in files_and_dirs:
-        if fs.isdir(item):
-            fs.rm(item, recursive=True)
-        else:
-            fs.rm(item)
-
-def modify_env(key, value=None, delete=False):
-    """
-    Modify the .env file to add, update, or delete a key-value pair.
-
-    Args:
-        key (str): The environment variable key.
-        value (str, optional): The value to set for the key. Defaults to None.
-        delete (bool, optional): If True, delete the key from the .env file. Defaults to False.
-    """
-    if not fs.exists(".env"):
-        with open(".env", 'w'):
-            pass 
-    with open(".env", 'r') as file:
-        lines = file.readlines()
-    if not delete:
-        line_replaced = False
-        for i in range(len(lines)):
-            if lines[i].startswith(key):
-                lines[i] = key + '=' + value + '\n'
-                line_replaced = True
-                break
-        if not line_replaced:
-            lines.append(key + '=' + value + '\n')
-    else:
-        for i in range(len(lines)):
-            if lines[i].startswith(key):
-                lines[i] = ""
-    with open(".env", 'w') as file:
-        file.writelines(lines)
 
 def initialise_mapping_recommendations():
     """
@@ -86,6 +43,11 @@ def initialise_mapping_recommendations():
         modify_env('init_prompt',init_prompt)
     elif list(config) != defailt_init_prompt:
         modify_env('init_prompt',init_prompt)
+    else:
+        pass
+
+    if 'auto_transform_available' not in list(config):
+        modify_env('auto_transform_available', 'no')
     else:
         pass
     
@@ -135,7 +97,5 @@ def initialise_mapping_recommendations():
         if clear:
             delete_files_and_folders("input/")
             delete_files_and_folders("results/")
-            del st.session_state['clear'] 
-            # I need to use session states the above is a hack to fix death looping 
-            # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
+            st.cache_data.clear()
             st.rerun()

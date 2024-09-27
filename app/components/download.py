@@ -31,6 +31,15 @@ def download_page():
     else:
         name = st.selectbox('Select study to download:', avail_data)
         df = pd.read_csv(f"{results_path}/{name}.csv")
+        df.replace('0%', None, inplace=True)
+        # only keep the core columns and drop the rest where all values are NaN
+        df1 = df[['study_var', 'codebook_var', 'confidence', 'notes', 'marked']]
+        df2 = df.drop(columns=['study_var', 'codebook_var', 'confidence', 'notes', 'marked']).dropna(axis=1, how='all')
+        df = pd.concat([df1, df2], axis=1)
+
+        # reverse the order of the columns
+        df = df.iloc[::-1]
+
         col1, col2= st.columns(2)
         with col1:
             st.dataframe(df)

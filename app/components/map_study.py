@@ -4,6 +4,10 @@ import fsspec
 import duckdb
 import time
 import numpy as np
+from dotenv import dotenv_values
+from .generate_transformations import generate_transformations
+from .transformation_utils import generic_direct_conversion, generic_catagorical_conversion
+from .util import split_var_confidence, format_example_data, add_to_session_state, pre_process_recomendations
 
 fs = fsspec.filesystem("")
 
@@ -16,21 +20,6 @@ mapping_options = ['To do',
         'Marked to reconsider',
         'Marked unmappable']
 
-def split_var_confidence(mapped_value):
-    """
-    Splits a mapped value into variable and confidence parts.
-
-    Args:
-        mapped_value (str): The mapped value string.
-
-    Returns:
-        tuple: A tuple containing the variable and confidence.
-    """
-    parts = mapped_value.split('  - ')
-    if len(parts) > 1:
-        return parts[0], parts[1]
-    else:
-        return parts[0], None
 
 def write_to_results(study, variable_to_map, mapped_variable, notes, avail_idx, results_file, transformation_instructions=None, transformation_type=None, source_dtype=None, target_dtype=None, patient_id=None, date=None):
     """
@@ -82,91 +71,6 @@ def write_to_results(study, variable_to_map, mapped_variable, notes, avail_idx, 
     df_updated.to_csv(results_file, index=False)
     add_to_session_state(study, patient_id_var, date_var)
 
-def format_example_data(example_data):
-    """
-    Formats example data for display.
-
-    Args:
-        example_data (list): List of example data.
-
-    Returns:
-        str: Formatted example data string.
-    """
-    example_data = [str(x) for x in list(example_data)]
-    if len(example_data) >= 5:
-        example_data.insert(5, '\n')
-    example = ' ; '.join(example_data)
-    return example
-
-def generic_catagorical_conversion(x, dictionary_str):
-    """
-    Converts a value using a categorical dictionary.
-
-    Args:
-        x (any): The value to convert.
-        dictionary_str (str): The dictionary as a string.
-
-    Returns:
-        any: The converted value or NaN if conversion fails.
-    """
-    dictionary_init = eval(dictionary_str)
-    dictionary = {str(key): value for key, value in dictionary_init.items()} # convert all keys to string dtype
-    x = str(x)
-    if x in list(dictionary):
-        out = dictionary[x]
-        if not out == None:
-            return out
-        else:
-            return np.nan
-    else:
-        return np.nan
-
-def dtype_conversion(x, dtype):
-    """
-    Converts a value to a specified data type.
-
-    Args:
-        x (any): The value to convert.
-        dtype (str): The target data type.
-
-    Returns:
-        any: The converted value or NaN if conversion fails.
-    """
-    try:
-        if dtype == 'string':
-            return str(x)
-        elif dtype == 'str':
-            return str(x)    
-        elif dtype == 'float':
-            return float(x)
-        elif dtype == 'integer':
-            return int(x)
-        elif dtype == 'int':
-            return int(x)
-        elif dtype == 'boolean':
-            return bool(x)
-        elif dtype == 'other':
-            return x
-    except:
-        return np.nan
-
-def generic_direct_conversion(x, x_str, source_dtype, target_dtype):
-    """
-    Performs a direct conversion of a value.
-
-    Args:
-        x (any): The value to convert.
-        x_str (str): The conversion expression as a string.
-        source_dtype (str): The source data type.
-        target_dtype (str): The target data type.
-
-    Returns:
-        any: The converted value.
-    """
-    x = dtype_conversion(x, source_dtype)
-    x = eval(x_str)
-    return dtype_conversion(x, target_dtype)
-
 def test_transformation(example_data, transformation_type, transformation_instructions, source_dtype, target_dtype):
     """
     Tests a transformation on example data.
@@ -196,58 +100,6 @@ def test_transformation(example_data, transformation_type, transformation_instru
     st.write('Preview of transformation:')
     st.code(transformed_data)
 
-def add_to_session_state(study, patient_id, date):
-    """
-    Adds patient ID and date to the session state.
-
-    Args:
-        study (str): The study name.
-        patient_id (str): The patient ID.
-        date (str): The date.
-    """
-    st.session_state[f'PID_{study}'] = patient_id
-    st.session_state[f'date_{study}'] = date
-
-def reorder_lists(list1, list2, value):
-    """
-    Reorders two lists, such that the value is at the top of list1.
-
-    Args:
-        list1 (list): The first list.
-        list2 (list): The second list.
-        value (any): The value to reorder around.
-
-    Returns:
-        tuple: The reordered lists.
-    """
-    index = list1.index(value)
-    reordered_list1 = [value] + list1[:index] + list1[index+1:]
-    reordered_list2 = [list2[index]] + list2[:index] + list2[index+1:]
-    return reordered_list1, reordered_list2
-
-def pre_process_recomendations(to_map_df, type_, study):
-    """
-    Pre-processes recommendations for mapping. By appending the confidence to the recommendation and reordering the list to have the previous PID or Date at the top of the respective lists. 
-
-    Args:
-        to_map_df (DataFrame): The DataFrame containing variables to map.
-        type_ (str): The type of recommendation (e.g., 'target', 'PID', 'date').
-        study (str): The study name.
-
-    Returns:
-        list: List of recommended keys.
-    """
-    recommended_codebook = eval(to_map_df[f'{type_}_recommendations'].to_list()[0])
-    recommended_confidence = eval(to_map_df[f'{type_}_distances'].to_list()[0])
-    recommended_confidence = [f" - {round((1-x)*(100))}%" for x in recommended_confidence]
-    if f'{type_}_{study}' in st.session_state:
-        if st.session_state[f'{type_}_{study}'] != 'None':
-            recommended_codebook, recommended_confidence = reorder_lists(recommended_codebook, recommended_confidence, st.session_state[f'{type_}_{study}'])
-    recommended_keys = [f"{x} {y}" for x, y in zip(recommended_codebook, recommended_confidence)]
-    if type_ in ['PID', 'date']:
-        recommended_keys.insert(0, 'None  - 0%')
-    return recommended_keys
-
 def map_study(study, variables_status, show_about, original_order, relational_mode, enable_transformations):
     """
     Main function to map study variables to codebook variables.
@@ -260,6 +112,16 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
         relational_mode (bool): Whether to enable relational mode.
         enable_transformations (bool): Whether to enable transformations.
     """
+    config = dotenv_values(".env")
+
+    if 'auto_transform_available' in list(config):
+        auto_transform_available = config['auto_transform_available']
+    else:
+        auto_transform_available = 'no'
+
+    if auto_transform_available == 'yes':
+        codebook = pd.read_csv(f'{input_path}/target_variables.csv')
+    
     if study == None:
         st.write(':red[No studies available, please initialise the mapping app]')
     else:
@@ -367,32 +229,65 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
                                      index=1,
                                      format_func=lambda x: mapping_options[x])  # returns index of options
                 notes = st.text_input('Notes about this variable:', '')
-                if enable_transformations:
-                    if example_avail:
-                        col3, col4 = st.columns(2)
-                        with col3:
-                            transformation_instructions = st.text_input('Transformation instructions for this variable:', '')
-                            transformation_type = st.selectbox('Type of transformation applied to this variable:', ['Direct', 'Categorical'])
-                            if transformation_type == 'Direct':
-                                source_dtype = st.selectbox('Source data type:', ['float', 'integer', 'string', 'boolean'])
-                                target_dtype = st.selectbox('Target data type:', ['float', 'integer', 'string', 'boolean'])
-                            else:
-                                source_dtype = None
-                                target_dtype = None
-                        with col4:
-                            test_transformation(example_data, transformation_type, transformation_instructions, source_dtype, target_dtype)
+                if enable_transformations and example_avail:
+
+                    codebook_var, codebook_conf = split_var_confidence(mapped_variable)
+                    
+                    if codebook_conf:
+                        codebook_conf = int(codebook_conf[:-1])
+                    else:
+                        codebook_conf = 0
+                    
+                    dtype_options = ['float', 'integer', 'string', 'boolean']
+                    if auto_transform_available == 'yes':
+                        codebook_var_df = codebook[codebook['description'] == codebook_var]
+                        value = codebook_var_df.Categories.item()
+                        if isinstance(value, float) and np.isnan(value): # direct
+                            transformation_type_idx = 0 
+                            transformation_instruction = 'x'
+                            dtype = codebook_var_df.dType.item()
+                            try:
+                                target_dtype_idx = dtype_options.index(dtype)
+                            except:
+                                target_dtype_idx = 0
+                        else: # categorical
+                            transformation_type_idx = 1
+                            transformation_instruction = '{}'
+                        generate_instructions = st.button('Auto Generate Transformation Instructions', key='generate')
+                        if generate_instructions:
+                            transformation_instruction = generate_transformations(split_var_confidence(mapped_variable)[0], variable_to_map, example_data, transformation_instruction, codebook_var_df)
+                        elif codebook_conf > 90:
+                            transformation_instruction = generate_transformations(split_var_confidence(mapped_variable)[0], variable_to_map, example_data, transformation_instruction, codebook_var_df)
+                    else:
+                        generate_instructions = st.button('Auto Generate Transformation Instructions', key='generate', disabled=True, help='Auto transformations are not available for this study as the target codebook does not contain dType, Unit, Categories, or Unit Example columns.')
+                        transformation_type_idx = 0
+                        transformation_instruction = 'x'
+                        target_dtype_idx = 0
+                    col3, col4 = st.columns(2)
+                    with col3:
+                        transformation_instruction_final = st.text_input('Transformation instructions for this variable:', transformation_instruction)
+                        transformation_types = ['Direct', 'Categorical']
+                        transformation_type = st.selectbox('Type of transformation applied to this variable:', transformation_types, index=transformation_type_idx)
+                        if transformation_type == 'Direct':
+                            source_dtype = st.selectbox('Source data type:', dtype_options)
+                            target_dtype = st.selectbox('Target data type:', dtype_options, index=target_dtype_idx)
+                        else:
+                            source_dtype = None
+                            target_dtype = None
+                    with col4:
+                        test_transformation(example_data, transformation_type, transformation_instruction_final, source_dtype, target_dtype)
                 else:
-                    transformation_instructions = None
+                    transformation_instruction_final = None
                     transformation_type = None
                     source_dtype = None
                     target_dtype = None
                 submitted = st.button(":green[Submit]", key='submit')
                 if submitted:
                     # write mappings to results
-                    _ = write_to_results(study, variable_to_map, mapped_variable, notes, avail_idx, results_file, transformation_instructions, transformation_type, source_dtype, target_dtype, patient_id, date)
+                    _ = write_to_results(study, variable_to_map, mapped_variable, notes, avail_idx, results_file, transformation_instruction_final, transformation_type, source_dtype, target_dtype, patient_id, date)
                     # sleep a few seconds to show results being written
                     time.sleep(0.2)
-                    # I need to use session states, the above is a hack to fix death looping 
+                    # I need to use session states, the above is a hack to fix death looping, but also this is vagualy equivalant to repaint in react which is what I want
                     # see https://discuss.streamlit.io/t/how-should-st-rerun-behave/54153/2
                     del st.session_state['submit']
                     st.rerun()
