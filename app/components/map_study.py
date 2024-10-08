@@ -125,6 +125,7 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
     if study == None:
         st.write(':red[No studies available, please initialise the mapping app]')
     else:
+        transformation_instruction = None
         fs.mkdirs(results_path, exist_ok=True)
         results_file = f'{results_path}/{study}.csv'
         study_input_path = f"{input_path}/{study}"
@@ -230,6 +231,9 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
                                      format_func=lambda x: mapping_options[x])  # returns index of options
                 notes = st.text_input('Notes about this variable:', '')
                 if enable_transformations and example_avail:
+                    # Initialize the transformation instructions dictionary if it doesn't exist
+                    if 'transformation_instructions' not in st.session_state:
+                        st.session_state.transformation_instructions = {}
 
                     codebook_var, codebook_conf = split_var_confidence(mapped_variable)
                     
@@ -244,28 +248,31 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
                         value = codebook_var_df.Categories.item()
                         if isinstance(value, float) and np.isnan(value): # direct
                             transformation_type_idx = 0 
-                            transformation_instruction = 'x'
                             dtype = codebook_var_df.dType.item()
+                            if variable_to_map not in st.session_state.transformation_instructions:
+                                st.session_state.transformation_instructions[variable_to_map] = 'x'
                             try:
                                 target_dtype_idx = dtype_options.index(dtype)
                             except:
                                 target_dtype_idx = 0
                         else: # categorical
                             transformation_type_idx = 1
-                            transformation_instruction = '{}'
+                            if variable_to_map not in st.session_state.transformation_instructions:
+                                st.session_state.transformation_instructions[variable_to_map] = '{}'
                         generate_instructions = st.button('Auto Generate Transformation Instructions', key='generate')
                         if generate_instructions:
-                            transformation_instruction = generate_transformations(split_var_confidence(mapped_variable)[0], variable_to_map, example_data, transformation_instruction, codebook_var_df)
-                        elif codebook_conf > 90:
-                            transformation_instruction = generate_transformations(split_var_confidence(mapped_variable)[0], variable_to_map, example_data, transformation_instruction, codebook_var_df)
+                            st.session_state.transformation_instructions[variable_to_map] = generate_transformations(split_var_confidence(mapped_variable)[0], variable_to_map, example_data, st.session_state.transformation_instructions.get(variable_to_map, ''), codebook_var_df)
                     else:
                         generate_instructions = st.button('Auto Generate Transformation Instructions', key='generate', disabled=True, help='Auto transformations are not available for this study as the target codebook does not contain dType, Unit, Categories, or Unit Example columns.')
                         transformation_type_idx = 0
-                        transformation_instruction = 'x'
+                        if variable_to_map not in st.session_state.transformation_instructions:
+                            st.session_state.transformation_instructions[variable_to_map] = 'x'
                         target_dtype_idx = 0
+
                     col3, col4 = st.columns(2)
                     with col3:
-                        transformation_instruction_final = st.text_input('Transformation instructions for this variable:', transformation_instruction)
+                        transformation_instruction_final = st.text_input('Transformation instructions for this variable:', st.session_state.transformation_instructions.get(variable_to_map, ''), key='transformation_input')
+                        st.session_state.transformation_instructions[variable_to_map] = transformation_instruction_final
                         transformation_types = ['Direct', 'Categorical']
                         transformation_type = st.selectbox('Type of transformation applied to this variable:', transformation_types, index=transformation_type_idx)
                         if transformation_type == 'Direct':
@@ -274,17 +281,23 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
                         else:
                             source_dtype = None
                             target_dtype = None
+                    
                     with col4:
                         test_transformation(example_data, transformation_type, transformation_instruction_final, source_dtype, target_dtype)
+                        if st.session_state.get('transformation_input') != st.session_state.get('last_transformation_input'):
+                            st.session_state['last_transformation_input'] = st.session_state.get('transformation_input')
                 else:
-                    transformation_instruction_final = None
+                    transformation_instruction = None
                     transformation_type = None
                     source_dtype = None
                     target_dtype = None
+                # At the end of the function, before the submit button
+                transformation_instruction = st.session_state.transformation_instructions.get(variable_to_map, None)
                 submitted = st.button(":green[Submit]", key='submit')
                 if submitted:
                     # write mappings to results
-                    _ = write_to_results(study, variable_to_map, mapped_variable, notes, avail_idx, results_file, transformation_instruction_final, transformation_type, source_dtype, target_dtype, patient_id, date)
+                    _ = write_to_results(study, variable_to_map, mapped_variable, notes, avail_idx, results_file, transformation_instruction, transformation_type, source_dtype, target_dtype, patient_id, date)
+                    transformation_instruction = None
                     # sleep a few seconds to show results being written
                     time.sleep(0.2)
                     # I need to use session states, the above is a hack to fix death looping, but also this is vagualy equivalant to repaint in react which is what I want

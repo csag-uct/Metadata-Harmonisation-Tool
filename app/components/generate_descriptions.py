@@ -222,7 +222,7 @@ def get_example_dict(openai_client, described, variables_df, text_chunks=None, e
         example_limitor = 5
     for num in range(0,example_limitor):
         example = described[num]
-        example_description = variables_df.loc[variables_df['var'] == example]['description'].values[0]
+        example_description = variables_df.loc[variables_df['variable_name'] == example]['description'].values[0]
         if embeddings is not None and text_chunks is not None:
             example_context = get_relevent_context(openai_client, example, text_chunks, embeddings)
         else:
