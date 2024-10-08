@@ -2,15 +2,11 @@
 
 This is a [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variable names in a dataset to that of a target codebook. The first and often most tedious step in developing a common data model. 
 
-*The tool has been updated to support transformations and building relations between variables. updating docs on the to do list. (PR's welcome :))*
-
-![GUI screenshot](GUI.png)
-
-#### A video demonstration is avaliable [here](https://drive.google.com/file/d/1fLhKLtDvA_02pvjJYkFjXyDobZA4Y6V8/view?usp=sharing)
+![GUI screenshot](demo.gif)
 
 ## What it does:
 
-The Metadata Harmonisation Interface provides a convenient portal to match variables from an incoming dataset to a target set of ontologies. In this way the tool provides a similar role to that of the [White Rabbit tool](https://github.com/OHDSI/WhiteRabbit) utilised by the OHDSI community. This tool differentiates itself by using Large Language Models to generate variable descriptions where none have been provided and by recommending the most likely target variable to map to. A confidence indication is provided alongside mapping recommendations. This dramatically speeds up the mapping process.
+The Metadata Harmonisation Interface provides a convenient portal to match variables from an incoming dataset to a target set of ontologies. In this way the tool provides a similar role to that of the [White Rabbit tool](https://github.com/OHDSI/WhiteRabbit) utilised by the OHDSI community. This tool differentiates itself by using Large Language Models to generate variable descriptions where none have been provided, recommending the most likely target variable to map to as well as supporting creation and testing of variable transformation instructions. A confidence indication is provided alongside mapping recommendations. This dramatically speeds up the mapping process.
 
 ## How to use it: 
 
