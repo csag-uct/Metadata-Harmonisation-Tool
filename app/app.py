@@ -47,7 +47,7 @@ with st.sidebar:
         with col3:
             relational_mode = st.checkbox('Relational Mode', value = True, help = 'Enable this to map date and index (eg patient ID) to each variable. This allows for using the results to populate a relational database.')
         with col4:
-            enable_transformations = st.checkbox('Transform Mode', value = True, help = 'This adds functionality to create and test transformations instructions for each variable. These instructions can then be used to transform data to a common format. Example transformation instructions available [here](https://github.com/csag-uct/Metadata-Harmonisation-Tool/pull/19#issuecomment-2356409576)')
+            enable_transformations = st.checkbox('Transform Mode', value = True, help = 'Only available if example data is provided. This adds functionality to create and test transformations instructions for each variable. These instructions can then be used to transform data to a common format. Example transformation instructions available [here](https://github.com/csag-uct/Metadata-Harmonisation-Tool/pull/19#issuecomment-2356409576).')
     st.divider()
     st.write('Please report any issues to the [GitHub repository](https://github.com/csag-uct/Metadata-Harmonisation-Tool) or contact peter.marsh@uct.ac.za for more information.')
 
