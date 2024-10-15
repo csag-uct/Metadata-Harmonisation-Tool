@@ -15,3 +15,6 @@ dependencies:
 - streamlit>=1.20.0
 - tiktoken
 - pip
+- pip:
+    - clevercsv
+    - tiktoken

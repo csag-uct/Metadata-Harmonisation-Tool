@@ -20,6 +20,9 @@ mapping_options = ['To do',
         'Marked to reconsider',
         'Marked unmappable']
 
+if 'transformation_instructions' not in st.session_state:
+    st.session_state.transformation_instructions = {}
+
 
 def write_to_results(study, variable_to_map, mapped_variable, notes, avail_idx, results_file, transformation_instructions=None, transformation_type=None, source_dtype=None, target_dtype=None, patient_id=None, date=None):
     """
@@ -286,13 +289,12 @@ def map_study(study, variables_status, show_about, original_order, relational_mo
                         test_transformation(example_data, transformation_type, transformation_instruction_final, source_dtype, target_dtype)
                         if st.session_state.get('transformation_input') != st.session_state.get('last_transformation_input'):
                             st.session_state['last_transformation_input'] = st.session_state.get('transformation_input')
+                    transformation_instruction = st.session_state.transformation_instructions.get(variable_to_map, None)
                 else:
                     transformation_instruction = None
                     transformation_type = None
                     source_dtype = None
                     target_dtype = None
-                # At the end of the function, before the submit button
-                transformation_instruction = st.session_state.transformation_instructions.get(variable_to_map, None)
                 submitted = st.button(":green[Submit]", key='submit')
                 if submitted:
                     # write mappings to results
