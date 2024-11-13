@@ -12,7 +12,7 @@ dependencies:
 - python-dotenv
 - python-duckdb
 - scipy
-- streamlit>=1.20.0
+- streamlit>=1.20
 - tiktoken
 - pip
 - pip:

@@ -76,7 +76,7 @@ def write_to_results(study, variable_to_map, mapped_variable, notes, avail_idx, 
 
 def test_transformation(example_data, transformation_type, transformation_instructions, source_dtype, target_dtype):
     """
-    Tests a transformation on example data.
+    Runs the transformation instructions on the example data. And displays the results.
 
     Args:
         example_data (list): List of example data.

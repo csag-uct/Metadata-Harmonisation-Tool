@@ -2,7 +2,7 @@
 
 This is a [streamlit](https://streamlit.io) application we have constructed that facilitates the matching of variable names in a dataset to that of a target codebook. The first and often most tedious step in developing a common data model. 
 
-![GUI screenshot](demo.gif)
+![GUI screenshot](new_demo.gif)
 
 ## What it does:
 
