@@ -45,9 +45,9 @@ with st.sidebar:
             original_order = st.checkbox('Unsort', value = False, help = 'Show variables in the original order of incoming datasets. This can be helpful if you believe one variable is related to a neighbouring variable in the table.')
         col3, col4 = st.columns(2)
         with col3:
-            relational_mode = st.checkbox('Relational Mode', value = True, help = 'Enable this to map date and index (eg patient ID) to each variable. This allows for using the results to populate a relational database.')
+            relational_mode = st.checkbox('Relational Mode', value = True, help = 'Enable this to map date and index (eg patient ID) to each variable. Use this if the goal is to populate a relational database.')
         with col4:
-            enable_transformations = st.checkbox('Transform Mode', value = True, help = 'Only available if example data is provided. This adds functionality to create and test transformations instructions for each variable. These instructions can then be used to transform data to a common format. Example transformation instructions available [here](https://github.com/csag-uct/Metadata-Harmonisation-Tool/pull/19#issuecomment-2356409576).')
+            enable_transformations = st.checkbox('Transform Mode', value = True, help = 'This adds functionality to create and test transformations instructions for each variable. These instructions can then be used to transform data to a common format. Example transformation instructions available [here](https://github.com/csag-uct/Metadata-Harmonisation-Tool/pull/19#issuecomment-2356409576). Only available if example data is provided.')
     st.divider()
     st.write('Please report any issues to the [GitHub repository](https://github.com/csag-uct/Metadata-Harmonisation-Tool) or contact peter.marsh@uct.ac.za for more information.')
 
@@ -63,6 +63,6 @@ elif page == 'Map Studies':
     if study is not None:
         map_study(study, variables_status, show_about, original_order, relational_mode, enable_transformations)
     else:
-        st.write(':red[No studies available, please initialise the mapping app]')
+        st.write(':red[No studies available. Please initialise the mapping app]')
 elif page == "Download Results":
     download_page()
