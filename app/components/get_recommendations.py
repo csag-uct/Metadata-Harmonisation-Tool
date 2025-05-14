@@ -58,6 +58,7 @@ def embed_study(openai_client, study):
     df = pd.read_csv(f'{input_path}/{study}/dataset_variables_auto_completed.csv')[['variable_name','description']]
     df["var_embeddings"] = df['variable_name'].apply(lambda x: get_embedding(openai_client, x)) # type: ignore
     df["description_embeddings"] = df['description'].apply(lambda x: get_embedding(openai_client, x)) # type: ignore
+
     df.to_csv(f'{input_path}/{study}/dataset_variables_with_embeddings.csv', index=False)
 
 def calculate_cosine_similarity(embedding1, embedding2):
@@ -75,12 +76,14 @@ def calculate_cosine_similarity(embedding1, embedding2):
     return similarity
     
 def generate_recommendations(study):
+
     """
     Generate recommendations for the given study based on cosine similarity of embeddings.
 
     Args:
         study (str): The study name.
     """
+
     study_df = pd.read_csv(f'{input_path}/{study}/dataset_variables_with_embeddings.csv')
     target_df = pd.read_csv(f'{input_path}/target_variables_with_embeddings.csv')
     recommendations = []
